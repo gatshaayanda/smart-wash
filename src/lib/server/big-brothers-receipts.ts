@@ -4,14 +4,17 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
 export function bigBrothersAdminApp() {
-  const existing = getApps().find(app => app.name === "big-brothers-operations");
+  const existing = getApps().find(app => app.name === "smart-wash-operations");
   if (existing) return existing;
   const raw = process.env.FIREBASE_ADMIN_KEY;
   if (!raw) throw new Error("Secure receipts require FIREBASE_ADMIN_KEY on the server.");
   let serviceAccount: Record<string, unknown>;
   try { serviceAccount = JSON.parse(raw) as Record<string, unknown>; }
   catch { throw new Error("FIREBASE_ADMIN_KEY must contain valid service-account JSON."); }
-  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId: "vulas-car-wash" }, "big-brothers-operations");
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  if (!projectId) throw new Error("FIREBASE_PROJECT_ID must point to the dedicated Smart Wash Firebase project.");
+  if (serviceAccount.project_id && serviceAccount.project_id !== projectId) throw new Error("FIREBASE_ADMIN_KEY belongs to a different Firebase project.");
+  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-operations");
 }
 
 export async function requireBigBrothersStaff(request: Request) {
@@ -66,7 +69,7 @@ export async function createWalkInTicketReceipt(queueEntryId: string, job: Recor
 
     const token = createReceiptToken();
     const tokenHash = receiptTokenHash(token);
-    const receiptNumber = "BB-" + createdAt.slice(0, 10).replaceAll("-", "") + "-" + token.slice(0, 6).toUpperCase();
+    const receiptNumber = "SW-" + createdAt.slice(0, 10).replaceAll("-", "") + "-" + token.slice(0, 6).toUpperCase();
     const publishedPrice = typeof job.servicePrice === "number" && Number.isFinite(job.servicePrice) ? job.servicePrice : null;
     const agreedPrice = typeof job.agreedWashPrice === "number" && Number.isFinite(job.agreedWashPrice) ? job.agreedWashPrice : null;
     const displayPrice = agreedPrice ?? publishedPrice;
@@ -154,7 +157,7 @@ export function publicReceipt(receipt: Record<string, unknown>): PublicReceipt {
     receiptRef: String(receipt.receiptRef || ""),
     receiptKind: String(receipt.receiptKind || "completed-receipt"),
     priceNote: String(receipt.priceNote || ""),
-    businessName: "Big Brothers Car Wash",
+    businessName: "Smart Wash",
     locationName: "G-West, Botswana",
     customerName: String(receipt.customerName || ""),
     phone: String(receipt.phone || ""),
