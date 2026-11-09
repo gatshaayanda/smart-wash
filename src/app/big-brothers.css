@@ -1214,3 +1214,13 @@
  .customer-account-compact{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
  .customer-account-footer{padding-bottom:90px}
 }
+
+
+.smart-wash-signboard{display:grid;grid-template-columns:minmax(180px,.62fr) 1fr;gap:clamp(22px,4vw,52px);align-items:center;padding-top:38px;padding-bottom:38px}
+.smart-wash-signboard-media{width:100%;max-width:340px;margin:auto;border:1px solid #c9e2ed;border-radius:16px;overflow:hidden;background:#0a1931;box-shadow:0 16px 36px rgba(10,25,49,.16)}
+.smart-wash-signboard-media img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.smart-wash-signboard-copy h2{font-family:"Space Grotesk",Arial,sans-serif;font-size:clamp(32px,4vw,48px);line-height:1.02;letter-spacing:-.055em;margin:0 0 14px;color:#102844}
+.smart-wash-signboard-copy h2 em{font-style:normal;color:#278fba}
+.smart-wash-signboard-copy>p:not(.big-brothers-eyebrow){max-width:520px;color:#4f5d68;font-size:14px;line-height:1.7;margin:0 0 18px}
+.smart-wash-signboard-copy>span{display:inline-flex;align-items:center;gap:8px;color:#1e5c80;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:680px){.smart-wash-signboard{grid-template-columns:1fr;gap:20px;padding-top:26px;padding-bottom:28px}.smart-wash-signboard-media{max-width:260px}.smart-wash-signboard-copy{text-align:center}.smart-wash-signboard-copy>p:not(.big-brothers-eyebrow){margin-left:auto;margin-right:auto}}
