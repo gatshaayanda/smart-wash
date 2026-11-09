@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const weatherCacheKey = "big-brothers-car-wash:last-weather:v1";
+const weatherCacheKey = "smart-wash:last-weather:v1";
 
 type CurrentWeather = {
   temperature_2m: number;
@@ -14,9 +14,7 @@ type CurrentWeather = {
 };
 
 const videos = [
-  { src: "/videos/Left.mp4", title: "Approach from the left", detail: "See the entrance as you arrive from the left." },
-  { src: "/videos/Right.mp4", title: "Approach from the right", detail: "Use this view if you approach from the right." },
-  { src: "/videos/Bays.mp4", title: "Inside the wash bays", detail: "Preview the available wash-bay area." },
+  { src: "/videos/smart-wash-location.mp4", title: "Around Smart Wash", detail: "Take a look at the business surroundings and wash area." },
 ];
 
 function condition(code: number) {
@@ -67,7 +65,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
 
   const checkOfflineMedia = useCallback(async () => {
     try {
-      const cache = await caches.open("big-brothers-media-v2");
+      const cache = await caches.open("smart-wash-media-v1");
       const cached = await Promise.all(videos.map(async video => {
         const response = await cache.match(new URL(video.src, window.location.origin).href);
         return Boolean(response && response.ok && (response.headers.get("content-type") || "").toLowerCase().includes("video"));
@@ -87,9 +85,9 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
     if (saving) return;
     setSaving(true);
     setOfflineReady(false);
-    setMediaStatus("Preparing videos for offline playback. Keep this page open; the files total about 104 MB.");
+    setMediaStatus("Preparing the Smart Wash location video for offline playback. Keep this page open; the files total about 104 MB.");
     try {
-      const cache = await caches.open("big-brothers-media-v2");
+      const cache = await caches.open("smart-wash-media-v1");
       let completed = 0;
       for (const video of videos) {
         const url = new URL(video.src, window.location.origin).href;
@@ -112,7 +110,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
           }
         }
         completed += 1;
-        setMediaStatus("Saved and verified " + completed + " of " + videos.length + " videos on this device.");
+        setMediaStatus("Saved and verified " + completed + " of " + videos.length + " video on this device.");
       }
 
       const verified = await Promise.all(videos.map(video => cache.match(new URL(video.src, window.location.origin).href)));
@@ -120,7 +118,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
         throw new Error("Not every video is available in offline storage yet. Keep this page open and try saving again.");
       }
       setOfflineReady(true);
-      setMediaStatus("All three location videos are saved and verified for offline playback on this device.");
+      setMediaStatus("The Smart Wash location video is saved and verified for offline playback on this device.");
     } catch (error) {
       await checkOfflineMedia();
       setMediaStatus(error instanceof Error ? error.message : "Videos could not be saved for offline use. Try again while connected.");
@@ -131,20 +129,20 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
 
   const updated = weather?.time ? new Date(weather.time).toLocaleTimeString("en-BW", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Gaborone" }) : "";
   const localHour = Number(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: "Africa/Gaborone" }).format(new Date()));
-  const greeting = localHour < 11 ? "Dumela, G-West!" : localHour < 17 ? "Eita, G-West!" : "Good evening, G-West!";
-  const weatherMood = !weather ? { emoji: "🤝", title: "Your Brothers have your back.", detail: "Live conditions are taking a break. You can still request a wash and the team will confirm availability." }
+  const greeting = localHour < 11 ? "Dumela!" : localHour < 17 ? "Eita!" : "Good evening!";
+  const weatherMood = !weather ? { emoji: "🤝", title: "Smart Wash has your back.", detail: "Live conditions are taking a break. You can still request a wash and the team will confirm availability." }
     : weather.weather_code >= 51 && weather.weather_code <= 82 ? { emoji: "🌧️", title: "A wet one out there.", detail: "Take your time. You can request a wash and check the best timing with the team." }
     : weather.weather_code >= 95 ? { emoji: "⛈️", title: "Stormy skies in Gaborone.", detail: "Put safety first. Check with the team before making the trip." }
     : weather.wind_speed_10m >= 25 ? { emoji: "💨", title: "Wind and dust on the move.", detail: "Been on dusty roads? Your ride deserves a little care." }
-    : weather.temperature_2m >= 32 ? { emoji: "☀️", title: "Gaborone is bringing the heat!", detail: "Keep cool out there. When you're ready, bring your ride through." }
-    : weather.weather_code === 0 ? { emoji: "☀️", title: "Looking like a bright day.", detail: "A good time to give your ride some attention. The Brothers are here to help." }
+    : weather.temperature_2m >= 32 ? { emoji: "☀️", title: "It's bringing the heat!", detail: "Keep cool out there. When you're ready, bring your ride through." }
+    : weather.weather_code === 0 ? { emoji: "☀️", title: "Looking like a bright day.", detail: "A good time to give your ride some attention. The Smart Wash team is here to help." }
     : { emoji: "🌤️", title: "Whatever the weather, we've got your ride.", detail: "Make your next wash easy: join the queue or plan a return visit." };
 
   return <>
-    <section className="big-brothers-section location-weather-section" aria-label="Gaborone weather">
+    <section className="big-brothers-section location-weather-section" aria-label="Local weather">
       <div className="bb-weather-card">
         <div className="bb-weather-main">
-          <p className="big-brothers-eyebrow">🚘 BIG BROTHERS DAILY DRIVE · G-WEST</p>
+          <p className="big-brothers-eyebrow">🚘 SMART WASH DAILY DRIVE · BOTSWANA</p>
           <h3 className="bb-daily-greeting">{greeting}</h3>
           <p className="bb-daily-message"><span aria-hidden="true">{weatherMood.emoji}</span> <strong>{weatherMood.title}</strong> {weatherMood.detail}</p>
           <p className="bb-weather-condition-label">CURRENT CONDITIONS</p>
@@ -160,7 +158,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
       <div className="section-title">
         <p className="big-brothers-eyebrow">YOUR FIRST VISIT</p>
         <h2>Find us. Pull in. Get clean.</h2>
-        <p>Quick visual directions to the entrance and wash bays. Choose a video when you need it; nothing plays automatically.</p>
+        <p>A look at the business surroundings. Play the location video when you need it; nothing plays automatically.</p>
       </div>
       <div className="bb-location-videos">
         {videos.map(video => <article className="bb-location-video" key={video.src}>
@@ -169,8 +167,8 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
         </article>)}
       </div>
       <div className="bb-offline-media">
-        <div><strong>{offlineReady ? "Location guide ready offline" : "Need the directions without data?"}</strong><p>{offlineReady ? "All three videos are cached on this device." : "Save the three videos on Wi-Fi or mobile data to watch them later without a connection (about 104 MB)."}</p></div>
-        <button type="button" className="big-brothers-button secondary" disabled={saving || offlineReady} onClick={() => void saveForOffline()}>{saving ? "Saving videos…" : offlineReady ? "Saved on this device" : "Save videos for offline"}</button>
+        <div><strong>{offlineReady ? "Location guide ready offline" : "Need the directions without data?"}</strong><p>{offlineReady ? "The location video is cached on this device." : "Save the original location video on Wi-Fi or mobile data to watch it later without a connection."}</p></div>
+        <button type="button" className="big-brothers-button secondary" disabled={saving || offlineReady} onClick={() => void saveForOffline()}>{saving ? "Saving location video…" : offlineReady ? "Saved on this device" : "Save location video offline"}</button>
       </div>
       {mediaStatus && <p className="big-brothers-notice pending" role="status" aria-live="polite">{mediaStatus}</p>}
     </section>}
