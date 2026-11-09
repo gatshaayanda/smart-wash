@@ -16,7 +16,7 @@ type Notice = { kind: "success" | "error" | "pending"; text: string };
 const pendingKey = "smart-wash:offline-requests:v1";
 const stamp = () => new Date().toISOString();
 function gaboroneDateKey(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Botswana", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Gaborone", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
   const get = (type: string) => parts.find(part => part.type === type)?.value ?? "";
   return get("year") + "-" + get("month") + "-" + get("day");
 }
@@ -29,7 +29,7 @@ function bookingDateLabel(value: string) {
   return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value + "T12:00:00Z"));
 }
 function bookingDayName(value: string) {
-  return new Date(value + "T12:00:00+02:00").toLocaleDateString("en-US", { weekday: "long", timeZone: "Africa/Botswana" }).toLowerCase();
+  return new Date(value + "T12:00:00+02:00").toLocaleDateString("en-US", { weekday: "long", timeZone: "Africa/Gaborone" }).toLowerCase();
 }
 
 const money = (price?: number) => typeof price === "number" ? "P" + price.toLocaleString("en-BW", { maximumFractionDigits: 2 }) : "Price confirmed by the team";
@@ -308,7 +308,7 @@ export default function Home() {
         const scheduledDate = new Date(scheduledInput);
         if (!Number.isFinite(scheduledDate.getTime()) || scheduledDate.getTime() <= Date.now()) throw new Error("Choose a future date and time.");
         const closedDays = Array.isArray(settings.closedDays) ? settings.closedDays.map(day => String(day).toLowerCase()) : [];
-        const dayName = scheduledDate.toLocaleDateString("en-US", { weekday: "long", timeZone: "Africa/Botswana" }).toLowerCase();
+        const dayName = scheduledDate.toLocaleDateString("en-US", { weekday: "long", timeZone: "Africa/Gaborone" }).toLowerCase();
         if (closedDays.includes(dayName)) throw new Error("That day is marked closed by Smart Wash. Choose another date.");
         const scheduledFor = scheduledDate.toISOString();
         collectionName = "bookings";
