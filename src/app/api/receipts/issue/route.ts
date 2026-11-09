@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Walk-in receipt could not be issued.";
     const status = /FIREBASE_ADMIN_KEY|credentials|service-account/i.test(message) ? 503 : /auth\/|token/i.test(message) ? 401 : 400;
-    console.error("Big Brothers walk-in receipt issue failed:", message);
+    console.error("Smart Wash walk-in receipt issue failed:", message);
     return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
