@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Announcement could not be published.";
     const status = /staff sign-in/i.test(message) ? 401 : /staff access/i.test(message) ? 403 : 500;
-    console.error("Big Brothers announcement publish failed:", message);
+    console.error("Smart Wash announcement publish failed:", message);
     return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
