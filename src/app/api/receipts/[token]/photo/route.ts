@@ -24,7 +24,7 @@ export async function POST(request: Request, context: { params: Promise<{ token:
     let decodedObject = "";
     try { decodedObject = decodeURIComponent(encodedObject); } catch {}
     if (parsed.protocol !== "https:" || parsed.hostname !== "firebasestorage.googleapis.com" || decodedObject !== storagePath || !parsed.searchParams.has("token")) {
-      return NextResponse.json({ error: "The media must come from the approved Big Brothers customer upload." }, { status: 400 });
+      return NextResponse.json({ error: "The media must come from the approved Smart Wash customer upload." }, { status: 400 });
     }
     const db = getFirestore(access.app);
     const submissionRef = db.collection("gallerySubmissions").doc();
@@ -44,7 +44,7 @@ export async function POST(request: Request, context: { params: Promise<{ token:
     });
     return NextResponse.json({ submitted: true, message: "Media submitted for staff review. It will not appear publicly unless approved." }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Big Brothers customer media submission failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash customer media submission failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ error: "Media submission could not be saved. Please try again." }, { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }
