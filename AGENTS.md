@@ -34,7 +34,7 @@
 - Compactness applies to homepage, booking, customer account, receipts and admin—not only the landing page.
 - Apply the Operational Transparency Standard: show real activity and outcomes, never fake progress.
 - Smart Wash palette: blue/cyan and navy derived from the supplied signboard. Use the supplied location video as homepage hero media and signboard photograph as poster/fallback.
-- Do not invent an address, hours, phone number, price, discount, review or service claim. Publish only prices verified from the signboard or owner.
+- Do not invent an address, hours, phone number, price, discount, review or service claim. Publish only prices verified from the signboard or owner. Weather coordinates and operating capacity must be explicitly configured by the owner; never inherit the source business coordinates or capacity. The admin service catalogue must include active and hidden services so staff can restore them, edit names/descriptions/prices, and delete entries. The explicit signboard quick-add may publish only the nine clearly legible prices documented in docs/SMART-WASH-SERVICE-CATALOGUE.md.
 
 ## Commands and QA
 ```bash
@@ -44,5 +44,5 @@ npm run lint
 npx tsc --noEmit
 npm run build
 ```
-Test booking, walk-in, customer ownership/receipts, staff login and CRUD, mobile layouts, offline draft sync, install/update and chatbot. Review the complete diff. A GitHub push is not a build or deployment. The owner handles Vercel unless delegated.
+Test booking, walk-in, customer ownership/receipts, staff login and full service CRUD (including hide → republish), one-click import of the nine verified signboard prices, mobile layouts, configured/unconfigured weather, capacity validation, offline draft sync, install/update and chatbot. Review the complete diff. A GitHub push is not a build or deployment. The owner handles Vercel unless delegated.
 - Latest verified checkpoints: baseline `b104afc`; media `250f086`. Do not declare QA complete until local checks and customer/admin visual QA pass.
