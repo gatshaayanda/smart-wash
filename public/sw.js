@@ -17,20 +17,20 @@ try {
     vulaMessaging = firebase.messaging();
     vulaMessaging.onBackgroundMessage((payload) => {
       if (payload.notification) return;
-      const title = payload.data?.title || "Big Brothers Car Wash update";
+      const title = payload.data?.title || "Smart Wash update";
       const options = {
         body: payload.data?.body || "Open the app to check your latest information.",
-        icon: "/big-brothers-icon-192.png",
-        badge: "/big-brothers-icon-192.png",
+        icon: "/smart-wash-icon-192.png",
+        badge: "/smart-wash-icon-192.png",
         data: { link: payload.data?.link || "/account" },
       };
       self.registration.showNotification(title, options);
     });
   } else {
-    console.error("Big Brothers Car Wash Firebase Messaging web config is incomplete.");
+    console.error("Smart Wash Firebase Messaging web config is incomplete.");
   }
 } catch (error) {
-  console.error("Big Brothers Car Wash Firebase Messaging service worker could not initialize.", error);
+  console.error("Smart Wash Firebase Messaging service worker could not initialize.", error);
 }
 
 self.addEventListener("notificationclick", (event) => {
@@ -48,16 +48,16 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "big-brothers-shell-v3";
-const GAME_CACHE = "big-brothers-game-v2";
-const MEDIA_CACHE = "big-brothers-media-v2";
+const CACHE_VERSION = "smart-wash-shell-v1";
+const GAME_CACHE = "smart-wash-game-v1";
+const MEDIA_CACHE = "smart-wash-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 160;
 const PUBLIC_PAGE_LIMIT = 16;
 const APP_SHELL = [
   "/", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
-  "/big-brothers-icon.svg", "/big-brothers-icon-180.png", "/big-brothers-icon-192.png",
-  "/big-brothers-icon-512.png", "/manifest.webmanifest"
+  "/smart-wash-icon.svg", "/smart-wash-icon-180.png", "/smart-wash-icon-192.png",
+  "/smart-wash-icon-512.png", "/manifest.webmanifest"
 ];
 const RACING_MANIFEST = "/game-assets/racing-kit/manifest.json";
 
@@ -119,7 +119,7 @@ async function precacheRacingAssets() {
 
     const modelUrl = new URL(selected.path, self.location.origin);
     if (modelUrl.origin !== self.location.origin || !modelUrl.pathname.startsWith("/game-assets/racing-kit/")) {
-      console.warn("Skipped a racing asset outside Big Brothers local asset directory.");
+      console.warn("Skipped a racing asset outside Smart Wash local asset directory.");
       return;
     }
     const modelResponse = await fetchAndCache(modelUrl.href, GAME_CACHE);
@@ -159,9 +159,9 @@ self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     const obsolete = new Set([
-      "big-brothers-shell-v1", "big-brothers-shell-v2", "big-brothers-shell-v4",
-      "big-brothers-game-v1", "big-brothers-game-v3", "big-brothers-game-v4",
-      "big-brothers-media-v0", "big-brothers-media-v1"
+      "smart-wash-shell-v0", "smart-wash-shell-v0-old", "smart-wash-shell-v0-newer",
+      "smart-wash-game-v0", "smart-wash-game-v0-newer", "smart-wash-game-v0-old",
+      "smart-wash-media-v0", "smart-wash-media-v0-old"
     ]);
     await Promise.all(keys.filter((key) =>
       obsolete.has(key) && key !== SHELL_CACHE && key !== GAME_CACHE && key !== MEDIA_CACHE
