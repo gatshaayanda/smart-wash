@@ -34,7 +34,7 @@ export async function POST(request: Request, context: { params: Promise<{ token:
     });
     return NextResponse.json({ submitted: true, message: "Thanks. Your review was sent for the team to check." }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Big Brothers review submission failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash review submission failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ error: "Your review could not be saved. Please try again." }, { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }
