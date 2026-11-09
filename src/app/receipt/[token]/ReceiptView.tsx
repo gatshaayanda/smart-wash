@@ -162,10 +162,10 @@ export default function ReceiptView({ token }: { token: string }) {
   }
 
   if (loading) return <main className="receipt-page"><section className="receipt-card"><p>Loading secure receipt…</p></section></main>;
-  if (error || !receipt) return <main className="receipt-page"><section className="receipt-card"><span className="receipt-mark">BB</span><p className="big-brothers-eyebrow">BIG BROTHERS CAR WASH</p><h1>Receipt unavailable.</h1><p>{error || "This receipt link is invalid or has expired."}</p><Link className="big-brothers-button primary" href="/">Return to Smart Wash ↗</Link></section></main>;
+  if (error || !receipt) return <main className="receipt-page"><section className="receipt-card"><span className="receipt-mark">SW</span><p className="big-brothers-eyebrow">SMART WASH</p><h1>Receipt unavailable.</h1><p>{error || "This receipt link is invalid or has expired."}</p><Link className="big-brothers-button primary" href="/">Return to Smart Wash ↗</Link></section></main>;
 
   return <main className="receipt-page"><section className="receipt-card">
-    <header className="receipt-brand"><span className="receipt-mark">BB</span><span><strong>BIG BROTHERS CAR WASH</strong><small>{receipt.locationName}</small></span></header>
+    <header className="receipt-brand"><span className="receipt-mark">SW</span><span><strong>SMART WASH</strong><small>{receipt.locationName}</small></span></header>
     <p className="big-brothers-eyebrow">{receipt.receiptKind === "walk-in-ticket" ? "WALK-IN SERVICE RECEIPT" : "COMPLETED WASH · SECURE RECEIPT"}</p>
     <h1>{receipt.receiptKind === "walk-in-ticket" ? "Your walk-in service receipt." : "Your wash receipt."}</h1>
     <p className="receipt-reference">Reference <strong>{receipt.receiptRef}</strong></p>
