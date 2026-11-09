@@ -3,12 +3,15 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 
 function adminApp() {
-  const existing = getApps().find(app => app.name === "big-brothers-reminders");
+  const existing = getApps().find(app => app.name === "smart-wash-reminders");
   if (existing) return existing;
   const raw = process.env.FIREBASE_ADMIN_KEY;
   if (!raw) throw new Error("FIREBASE_ADMIN_KEY is missing.");
   const serviceAccount = JSON.parse(raw) as Record<string, unknown>;
-  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId: "vulas-car-wash" }, "big-brothers-reminders");
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  if (!projectId) throw new Error("FIREBASE_PROJECT_ID must point to the dedicated Smart Wash Firebase project.");
+  if (serviceAccount.project_id && serviceAccount.project_id !== projectId) throw new Error("FIREBASE_ADMIN_KEY belongs to a different Firebase project.");
+  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-reminders");
 }
 
 export async function runVulaBookingReminders() {
@@ -36,7 +39,7 @@ export async function runVulaBookingReminders() {
     const result = await messaging.sendEachForMulticast({
       tokens,
       notification: {
-        title: "Your Big Brothers Car Wash booking is coming up",
+        title: "Your Smart Wash booking is coming up",
         body: String(booking.data().serviceName || "Your car wash") + " is scheduled within the next 30 minutes."
       },
       data: { link: "/#my-wash", bookingId: booking.id }
