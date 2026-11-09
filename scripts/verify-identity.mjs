@@ -28,11 +28,13 @@ for (const icon of ["smart-wash-icon-180.png","smart-wash-icon-192.png","smart-w
 }
 if (!exists("public/smart-wash-icon.svg") || !generator.includes("smart-wash-icon-")) failures.push("Smart Wash SVG icon or PNG generator is missing.");
 if (!home.includes('/videos/smart-wash-location.mp4') || !home.includes('/images/smart-wash-sign.jpg')) failures.push("Original Smart Wash video and signboard poster are not wired to the homepage.");
+if (home.includes('className="smart-wash-signboard"') || home.includes("Take a look at our signboard and service menu.")) failures.push("Unrequested standalone signboard marketing section remains on the homepage.");
 if (!exists("public/images/smart-wash-sign.jpg") || !exists("public/videos/smart-wash-location.mp4")) failures.push("Original Smart Wash media is missing.");
 if (!sw.includes("smart-wash-shell-v1") || !sw.includes("smart-wash-game-v1")) failures.push("Smart Wash service-worker cache namespaces are missing.");
 if (!sw.includes("__SMART_WASH_FIREBASE_CONFIG__") || !messagingConfig.includes("__SMART_WASH_FIREBASE_CONFIG__") || sw.includes("__BIG_BROTHERS_FIREBASE_CONFIG__")) failures.push("Service-worker messaging configuration is not isolated to Smart Wash.");
 if (!install.includes("Install Smart Wash") || !install.includes("SMART WASH")) failures.push("PWA install card is not branded Smart Wash.");
 if (env.includes("vulas-car-wash") || read(".firebaserc").includes('"default": "vulas-car-wash"')) failures.push("Source Firebase project ID remains configured.");
+if (!env.includes("ADMIN_PASSWORD=") || env.includes("SMART_WASH_OPERATIONS_WORD=") || !loginRoute.includes("process.env.ADMIN_PASSWORD")) failures.push("Staff one-word login must use the ADMIN_PASSWORD server environment variable.");
 for (const file of ["src/app/page.tsx","src/app/layout.tsx","src/app/manifest.ts","src/app/pwa-register.tsx","src/app/iphone-install/page.tsx","src/app/account/page.tsx","src/app/receipt/[token]/ReceiptView.tsx"]) {
   if (read(file).includes("Big Brothers Car Wash") || read(file).includes("BIG BROTHERS CAR WASH")) failures.push("Inherited visible brand remains in " + file + ".");
 }
