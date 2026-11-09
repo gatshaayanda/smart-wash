@@ -13,12 +13,16 @@ const divisions = [
 const rewards = [0, 150, 75, 45];
 type Racer = { id: string; alias: string; division: number; wins: number; credits: number; upgrade: number; best: Record<string, number>; history: Array<Record<string, unknown>>; createdAt: string; updatedAt: string };
 function adminApp() {
-  const existing = getApps().find(app => app.name === "big-brothers-operations");
+  const existing = getApps().find(app => app.name === "smart-wash-racing");
   if (existing) return existing;
   const raw = process.env.FIREBASE_ADMIN_KEY;
-  if (!raw) throw new Error("Racing sync is not configured on the server.");
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  if (!raw || !projectId) throw new Error("Racing sync is not configured for the dedicated Smart Wash Firebase project.");
   const serviceAccount = JSON.parse(raw) as Record<string, unknown>;
-  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId: "vulas-car-wash" }, "big-brothers-operations");
+  if (typeof serviceAccount.project_id === "string" && serviceAccount.project_id !== projectId) {
+    throw new Error("FIREBASE_ADMIN_KEY belongs to a different Firebase project.");
+  }
+  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-racing");
 }
 async function identity(request: Request) {
   const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
@@ -139,7 +143,7 @@ export async function POST(request: Request) {
       const racerId = String(body.racerId || "");
       const track = String(body.track || "");
       if (!divisions.some(d => d.tracks.includes(track))) {
-        return NextResponse.json({ error: "Choose a valid Vula circuit." }, { status: 400 });
+        return NextResponse.json({ error: "Choose a valid Smart Wash circuit." }, { status: 400 });
       }
       const profile = await profileRef.get();
       const racers = (profile.data()?.racers || []) as Racer[];
