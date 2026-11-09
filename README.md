@@ -17,7 +17,7 @@
 ## Original Smart Wash media
 - Signboard photograph: `public/images/smart-wash-sign.jpg`.
 - Location footage: `public/videos/smart-wash-location.mp4`.
-- The location video is the homepage hero; the signboard image is its poster/fallback and authentic brand reference.
+- The location video is the homepage hero; the signboard image is its poster/fallback and authentic brand reference. The inherited Bays.mp4, Left.mp4 and Right.mp4 files have been removed.
 - Do not show inherited Big Brothers promotional media or brand identity in Smart Wash customer surfaces.
 
 ## Dedicated Firebase project required
