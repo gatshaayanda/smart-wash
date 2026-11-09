@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Your enquiry could not be sent.";
     const status = /sign in/i.test(message) ? 401 : /FIREBASE_ADMIN_KEY|credentials|service-account/i.test(message) ? 503 : 500;
-    console.error("Big Brothers customer enquiry failed:", message);
+    console.error("Smart Wash customer enquiry failed:", message);
     return NextResponse.json({ error: status === 503 ? "Your enquiry could not be saved because secure server access is not configured." : message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
