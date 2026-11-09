@@ -1,6 +1,6 @@
 "use client";
 
-import { collection, deleteDoc, doc, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, deleteDoc, deleteField, doc, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 
@@ -19,7 +19,7 @@ function subscribeList<T>(path: string, cb: (items: T[]) => void, fail: (error: 
     cb(snapshot.docs.map(item => ({ id: item.id, ...item.data() }) as T));
   }, fail);
 }
-export const subscribeServices = (cb: (items: VulaService[]) => void, fail: (e: Error) => void) => subscribeList<VulaService>("services", cb, fail, true);
+export const subscribeServices = (cb: (items: VulaService[]) => void, fail: (e: Error) => void) => subscribeList<VulaService>("services", cb, fail);
 export const subscribeGallery = (cb: (items: VulaGalleryItem[]) => void, fail: (e: Error) => void) => subscribeList<VulaGalleryItem>("gallery", cb, fail, true);
 export const subscribeReviews = (cb: (items: VulaReview[]) => void, fail: (e: Error) => void) => subscribeList<VulaReview>("reviews", cb, fail);
 export const subscribeGallerySubmissions = (cb: (items: VulaGallerySubmission[]) => void, fail: (e: Error) => void) => subscribeList<VulaGallerySubmission>("gallerySubmissions", cb, fail);
@@ -55,9 +55,22 @@ export async function saveLoyaltyBalance(uid: string, pointsBalance: number, not
 export function subscribeSettings(cb: (settings: Record<string, unknown> | null) => void, fail: (e: Error) => void): Unsubscribe {
   return onSnapshot(doc(db, "businessSettings", "main"), snap => cb(snap.exists() ? snap.data() : null), fail);
 }
-export async function saveService(data: { id?: string; name: string; description: string; category: string; price?: number; active: boolean }) {
+export async function saveService(data: { id?: string; name: string; description: string; category: string; price?: number | null; active: boolean }) {
   const ref = data.id ? doc(db, "services", data.id) : doc(collection(db, "services"));
-  await setDoc(ref, { ...data, id: ref.id, updatedAt: new Date().toISOString() }, { merge: true });
+  const payload: Record<string, unknown> = {
+    id: ref.id,
+    name: data.name.trim(),
+    description: data.description.trim(),
+    category: data.category.trim(),
+    active: data.active,
+    updatedAt: new Date().toISOString(),
+  };
+  if (data.price === null) payload.price = deleteField();
+  else if (typeof data.price === "number") payload.price = data.price;
+  await setDoc(ref, payload, { merge: true });
+}
+export async function deleteService(id: string) {
+  await deleteDoc(doc(db, "services", id));
 }
 export async function saveGalleryItem(data: { id?: string; title: string; imageUrl: string; mediaType?: "image" | "video"; description: string; active: boolean }) {
   const ref = data.id ? doc(db, "gallery", data.id) : doc(collection(db, "gallery"));
