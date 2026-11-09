@@ -9,13 +9,13 @@ try {
   console.warn("Background messaging is unavailable; offline app-shell support remains enabled.", error);
 }
 
-let vulaMessaging = null;
+let smartWashMessaging = null;
 try {
-  const config = self.__BIG_BROTHERS_FIREBASE_CONFIG__;
+  const config = self.__SMART_WASH_FIREBASE_CONFIG__;
   if (config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
     firebase.initializeApp(config);
-    vulaMessaging = firebase.messaging();
-    vulaMessaging.onBackgroundMessage((payload) => {
+    smartWashMessaging = firebase.messaging();
+    smartWashMessaging.onBackgroundMessage((payload) => {
       if (payload.notification) return;
       const title = payload.data?.title || "Smart Wash update";
       const options = {
