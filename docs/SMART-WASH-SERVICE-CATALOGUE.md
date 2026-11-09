@@ -16,7 +16,7 @@ The supplied signboard photograph was perspective-corrected for reading. The app
 | Carpet Cleaning From | P80 | Safe to add as a starting price; retain “From” in the service name |
 | Sofas (4 Sets) | P400 | Safe to add |
 
-The admin Services tab has an explicit **Add verified signboard services** action for these nine items. It adds only missing names and does not overwrite existing edits. Services can then be renamed, repriced, hidden/unhidden or deleted from the same admin tab. Hidden services remain visible to staff for management and are excluded from customer booking.
+The admin Services tab has an explicit **Add verified signboard services** action for these nine selected starter items. It adds only missing names and does not overwrite existing edits. These are starting catalogue values, not locked prices: every service can be renamed, repriced, hidden/unhidden or deleted from the same admin tab. Hidden services remain visible to staff for management and are excluded from customer booking.
 
 ## Prices requiring owner confirmation
 
