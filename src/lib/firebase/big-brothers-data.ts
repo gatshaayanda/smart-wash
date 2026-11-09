@@ -13,13 +13,13 @@ export type VulaReview = { id: string; queueEntryId: string; receiptRef: string;
 export type VulaGallerySubmission = { id: string; queueEntryId: string; receiptRef: string; customerId?: string; customerName: string; title: string; description: string; imageUrl: string; mediaType?: "image" | "video"; storagePath: string; publicConsent: boolean; status: "pending" | "approved" | "rejected"; createdAt: string };
 export type VulaGalleryReport = { id: string; galleryItemId: string; title: string; reason: string; description?: string; status: "open" | "reviewed"; createdAt: string };
 
-function subscribeList<T>(path: string, cb: (items: T[]) => void, fail: (error: Error) => void, activeOnly = false): Unsubscribe {
+function subscribeList<T>(path: string, cb: (items: T[], fromCache: boolean) => void, fail: (error: Error) => void, activeOnly = false): Unsubscribe {
   const source = collection(db, path);
   return onSnapshot(activeOnly ? query(source, where("active", "==", true)) : source, { includeMetadataChanges: true }, snapshot => {
-    cb(snapshot.docs.map(item => ({ id: item.id, ...item.data() }) as T));
+    cb(snapshot.docs.map(item => ({ id: item.id, ...item.data() }) as T), snapshot.metadata.fromCache);
   }, fail);
 }
-export const subscribeServices = (cb: (items: VulaService[]) => void, fail: (e: Error) => void) => subscribeList<VulaService>("services", cb, fail);
+export const subscribeServices = (cb: (items: VulaService[], fromCache: boolean) => void, fail: (e: Error) => void) => subscribeList<VulaService>("services", cb, fail);
 export const subscribeGallery = (cb: (items: VulaGalleryItem[]) => void, fail: (e: Error) => void) => subscribeList<VulaGalleryItem>("gallery", cb, fail, true);
 export const subscribeReviews = (cb: (items: VulaReview[]) => void, fail: (e: Error) => void) => subscribeList<VulaReview>("reviews", cb, fail);
 export const subscribeGallerySubmissions = (cb: (items: VulaGallerySubmission[]) => void, fail: (e: Error) => void) => subscribeList<VulaGallerySubmission>("gallerySubmissions", cb, fail);
