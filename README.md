@@ -20,15 +20,18 @@
 - The location video is the homepage hero; the signboard image is its poster/fallback and authentic brand reference. The inherited Bays.mp4, Left.mp4 and Right.mp4 files have been removed.
 - Do not show inherited Big Brothers promotional media or brand identity in Smart Wash customer surfaces.
 
-## Dedicated Firebase project required
-This repository must not reuse the Big Brothers/Vula Firebase project. Create a new Firebase project for Smart Wash and configure:
+## Smart Wash Firebase project
+Smart Wash uses the owner-designated Firebase project `exquisite-waterproof-services`. The public web configuration is documented in `.env.example`; configure the same project ID and a matching private service-account key in the deployment environment:
 
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - Optional: `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`, `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
 - Server-only: `FIREBASE_PROJECT_ID`, `FIREBASE_ADMIN_KEY`
 - Existing handler secret names retained for compatibility: `SMART_WASH_OPERATIONS_WORD`, `SMART_WASH_REMINDER_CRON_SECRET`. Use new Smart Wash secrets only.
 
-The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. Replace the placeholder in `.firebaserc` before using Firebase CLI. Never reuse source credentials or customer records. The Admin → Services screen can add the nine clearly legible signboard prices in one explicit action, then edit, hide/unhide or delete each service. Four incomplete signboard prices remain excluded until confirmed. Admin weather coordinates and booking capacity are intentionally unset until the owner configures the Smart Wash location and actual staffing.
+The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. The `.firebaserc` default target is already set to `exquisite-waterproof-services`. Never reuse source credentials or customer records. The Admin → Services screen can add the nine clearly legible signboard prices in one explicit action, then edit, hide/unhide or delete each service. Four incomplete signboard prices remain excluded until confirmed. Admin weather coordinates and booking capacity are intentionally unset until the owner configures the Smart Wash location and actual staffing.
+
+## Media uploads
+UploadThing handles customer ride submissions, staff gallery publishing and service media. Set the private `UPLOADTHING_TOKEN` in the deployment environment. Firebase Storage is not used; there are no Firebase Storage rules to publish.
 
 ## Development
 Node.js 20+ and npm:
