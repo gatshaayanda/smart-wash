@@ -568,8 +568,8 @@
 .customer-history-truncate{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .customer-account-loading{min-height:100svh;display:grid;place-items:center;padding:16px;background:#111}
 .customer-account-loading-stage{position:relative;isolation:isolate;overflow:hidden;width:min(100%,1080px);min-height:clamp(320px,52vh,480px);display:grid;place-items:center;border-radius:14px;background:radial-gradient(ellipse at 80% 10%,#1e5c8033,transparent 55%),#211d1b;color:#fff}
-.customer-account-loading-stage>video,.customer-account-loading-shade{position:absolute;inset:0;width:100%;height:100%}
-.customer-account-loading-stage>video{z-index:-2;object-fit:cover;opacity:.5}
+.customer-account-loading-stage>video,.customer-account-loading-stage>img,.customer-account-loading-shade{position:absolute;inset:0;width:100%;height:100%}
+.customer-account-loading-stage>video,.customer-account-loading-stage>img{z-index:-2;object-fit:cover;opacity:.5}
 .customer-account-loading-shade{z-index:-1;background:linear-gradient(90deg,#141211d9,#14121180)}
 .customer-account-loading-copy{width:min(100%,480px);padding:26px;text-align:center}
 .customer-account-loading-copy .customer-account-mark{margin:0 auto 12px}
