@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
-  const expected = process.env.BIG_BROTHERS_REMINDER_CRON_SECRET?.trim();
+  const expected = process.env.SMART_WASH_REMINDER_CRON_SECRET?.trim();
   const supplied = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim();
   if (!expected || supplied !== expected) return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
   try {
