@@ -20,7 +20,7 @@
 - Smart Wash must use a new Firebase project. No Vula/Big Brothers project ID, credentials, customer data or deployment identifiers may be reused.
 - Client config: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`, optional measurement/VAPID values.
 - Server config: `FIREBASE_PROJECT_ID` and `FIREBASE_ADMIN_KEY`. Service-account `project_id` must match `FIREBASE_PROJECT_ID`.
-- Active Smart Wash Firebase project: `exquisite-waterproof-services`; `.firebaserc` targets this project and `.env.example` contains the owner-supplied public web configuration. Server service-account credentials and staff/cron secrets remain private deployment variables. Never commit them.
+- Active Smart Wash Firebase project: `exquisite-waterproof-services`; `.firebaserc` targets this project and `.env.example` contains the owner-supplied public web configuration. Server service-account credentials, `ADMIN_PASSWORD` (the one-word staff login secret), and cron secrets remain private deployment variables. Set `ADMIN_PASSWORD` in the deployment environment; never commit its value.
 - Firestore rules/indexes are maintained in `firestore.rules` and `firestore.indexes.json`. Customer/admin media uploads use UploadThing (`UPLOADTHING_TOKEN`); Firebase Storage is not used and must not be introduced or deployed. Never make collections public to bypass permission errors.
 
 ## Protected behavior
