@@ -57,7 +57,7 @@ const PUBLIC_PAGE_LIMIT = 16;
 const APP_SHELL = [
   "/", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
   "/smart-wash-icon.svg", "/smart-wash-icon-180.png", "/smart-wash-icon-192.png",
-  "/smart-wash-icon-512.png", "/manifest.webmanifest"
+  "/smart-wash-icon-512.png", "/images/smart-wash-sign.jpg", "/manifest.webmanifest"
 ];
 const RACING_MANIFEST = "/game-assets/racing-kit/manifest.json";
 
