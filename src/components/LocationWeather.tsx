@@ -85,10 +85,9 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
     if (saving) return;
     setSaving(true);
     setOfflineReady(false);
-    setMediaStatus("Preparing the Smart Wash location video for offline playback. Keep this page open; the file is large; keep this page open while it saves.");
+    setMediaStatus("Preparing the Smart Wash location video for offline playback. Keep this page open while the original video saves.");
     try {
       const cache = await caches.open("smart-wash-media-v1");
-      let completed = 0;
       for (const video of videos) {
         const url = new URL(video.src, window.location.origin).href;
         let existing = await cache.match(url);
@@ -109,7 +108,6 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
             throw new Error("A saved video could not be verified in offline storage. Check device storage and try again.");
           }
         }
-        completed += 1;
         setMediaStatus("Location video saved and verified on this device.");
       }
 
