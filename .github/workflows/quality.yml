@@ -1,4 +1,4 @@
-name: Iteration 13 prototype quality
+name: Smart Wash quality checks
 on:
   push:
     branches: [main]
