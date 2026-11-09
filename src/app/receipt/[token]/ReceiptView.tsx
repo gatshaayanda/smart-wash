@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getIdToken, GoogleAuthProvider, linkWithPopup, signInAnonymously, signInWithPopup, signOut } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { auth, storage } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/client";
+import { generateReactHelpers } from "@uploadthing/react";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
+
+const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 type Receipt = {
   receiptRef: string;
@@ -48,6 +51,7 @@ export default function ReceiptView({ token }: { token: string }) {
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoSubmitted, setPhotoSubmitted] = useState(false);
   const [photoMessage, setPhotoMessage] = useState("");
+  const { startUpload, isUploading } = useUploadThing("fileUploader");
 
   useEffect(() => {
     let cancelled = false;
@@ -71,8 +75,9 @@ export default function ReceiptView({ token }: { token: string }) {
     if (photoBusy || photoSubmitted) return;
     const supportedImage = Boolean(photoFile && photoFile.type.startsWith("image/"));
     const supportedVideo = Boolean(photoFile && ["video/mp4", "video/webm", "video/quicktime"].includes(photoFile.type));
-    if (!photoFile || (!supportedImage && !supportedVideo) || photoFile.size > 20 * 1024 * 1024) {
-      setPhotoMessage("Choose a photo or MP4/WebM/MOV video under 20 MB.");
+    const maxBytes = supportedVideo ? 16 * 1024 * 1024 : 4 * 1024 * 1024;
+    if (!photoFile || (!supportedImage && !supportedVideo) || photoFile.size > maxBytes) {
+      setPhotoMessage(supportedVideo ? "Choose an MP4/WebM/MOV video under 16 MB." : "Choose an image under 4 MB.");
       return;
     }
     if (!photoConsent) {
@@ -82,15 +87,15 @@ export default function ReceiptView({ token }: { token: string }) {
     setPhotoBusy(true);
     setPhotoMessage("Uploading photo securely…");
     try {
-      const user = auth.currentUser || (await signInAnonymously(auth)).user;
-      const extension = (photoFile.name.split(".").pop() || "jpg").replace(/[^a-zA-Z0-9]/g, "").slice(0, 8) || "jpg";
-      const storagePath = "gallery-submissions/" + user.uid + "/" + Date.now() + "-" + crypto.randomUUID() + "." + extension;
-      const uploaded = await uploadBytes(ref(storage, storagePath), photoFile, { contentType: photoFile.type });
-      const imageUrl = await getDownloadURL(uploaded.ref);
+      if (!auth.currentUser) await signInAnonymously(auth);
+      const uploaded = await startUpload([photoFile]);
+      const file = uploaded?.[0];
+      const imageUrl = file?.ufsUrl || file?.url;
+      if (!file?.key || !imageUrl) throw new Error("UploadThing did not confirm the uploaded media. Please retry.");
       const response = await fetch("/api/receipts/" + encodeURIComponent(token) + "/photo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl, storagePath, mediaType: photoFile.type.startsWith("video/") ? "video" : "image", title: photoTitle.trim(), description: photoDescription.trim(), publicConsent: photoConsent }),
+        body: JSON.stringify({ imageUrl, uploadKey: file.key, mediaType: photoFile.type.startsWith("video/") ? "video" : "image", title: photoTitle.trim(), description: photoDescription.trim(), publicConsent: photoConsent }),
       });
       const data = await response.json().catch(() => ({})) as { submitted?: boolean; error?: string; message?: string };
       if (!response.ok || !data.submitted) throw new Error(data.error || "Photo submission could not be saved.");
