@@ -155,13 +155,17 @@ async function saveBusinessSettings(form: HTMLFormElement) {
     const weatherLongitude = longitudeRaw ? Number(longitudeRaw) : null;
     if (weatherLatitude !== null && (!Number.isFinite(weatherLatitude) || weatherLatitude < -90 || weatherLatitude > 90)) throw new Error("Latitude must be between -90 and 90.");
     if (weatherLongitude !== null && (!Number.isFinite(weatherLongitude) || weatherLongitude < -180 || weatherLongitude > 180)) throw new Error("Longitude must be between -180 and 180.");
+    const siteCapacity = Number(fields.get("siteCapacityPerSlot"));
+    const mobileCapacity = Number(fields.get("mobileCapacityPerSlot"));
+    if (!Number.isInteger(siteCapacity) || siteCapacity < 1 || siteCapacity > 100) throw new Error("Site capacity must be a whole number from 1 to 100.");
+    if (!Number.isInteger(mobileCapacity) || mobileCapacity < 1 || mobileCapacity > 100) throw new Error("Mobile capacity must be a whole number from 1 to 100.");
     await saveSettings({
       businessName: String(fields.get("businessName")),
       locationName: String(fields.get("locationName")),
       address: String(fields.get("address")),
       openingHours: String(fields.get("openingHours")),
-      siteCapacityPerSlot: Number(fields.get("siteCapacityPerSlot")),
-      mobileCapacityPerSlot: Number(fields.get("mobileCapacityPerSlot")),
+      siteCapacityPerSlot: siteCapacity,
+      mobileCapacityPerSlot: mobileCapacity,
       mobileCoverage: String(fields.get("mobileCoverage")).split(",").map(value => value.trim()).filter(Boolean),
       bookingNotice: String(fields.get("bookingNotice")),
       openingTime: String(fields.get("openingTime") || ""),
