@@ -24,8 +24,11 @@ export async function GET(request: Request) {
     if (closedDays.includes(dayName)) return NextResponse.json({ configured: true, slots: [], message: "The wash is marked closed on this day. Choose another date." }, { headers: { "Cache-Control": "no-store" } });
 
     const capacityKey = mode === "mobile" ? "mobileCapacityPerSlot" : "siteCapacityPerSlot";
-    const configuredCapacity = Number(settings[capacityKey] ?? 4);
-    const capacity = Number.isFinite(configuredCapacity) && configuredCapacity > 0 ? Math.min(100, Math.floor(configuredCapacity)) : 4;
+    const configuredCapacity = Number(settings[capacityKey]);
+    if (!Number.isFinite(configuredCapacity) || configuredCapacity < 1 || configuredCapacity > 100) {
+      return NextResponse.json({ configured: false, slots: [], message: "Wash capacity has not been configured by the team yet. Choose a preferred time for staff to review." }, { headers: { "Cache-Control": "no-store" } });
+    }
+    const capacity = Math.floor(configuredCapacity);
     const start = new Date(date + "T00:00:00+02:00").toISOString();
     const next = new Date(new Date(date + "T12:00:00+02:00").getTime() + 24 * 60 * 60 * 1000);
     const end = new Date(next.toISOString().slice(0, 10) + "T00:00:00+02:00").toISOString();
@@ -48,7 +51,7 @@ export async function GET(request: Request) {
     }
     return NextResponse.json({ configured: true, capacity, slots, message: slots.length ? "Choose an available preferred time. Staff will still confirm the request." : "No slots are currently available for this day. Choose another date." }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Big Brothers availability lookup failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash availability lookup failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ configured: false, slots: [], message: "Availability could not be checked. Please retry or ask staff." }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }
