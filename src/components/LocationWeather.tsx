@@ -110,18 +110,18 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
           }
         }
         completed += 1;
-        setMediaStatus("Saved and verified " + completed + " of " + videos.length + " video on this device.");
+        setMediaStatus("Location video saved and verified on this device.");
       }
 
       const verified = await Promise.all(videos.map(video => cache.match(new URL(video.src, window.location.origin).href)));
       if (!verified.every(response => response && response.ok && (response.headers.get("content-type") || "").toLowerCase().includes("video"))) {
-        throw new Error("Not every video is available in offline storage yet. Keep this page open and try saving again.");
+        throw new Error("The location video is not available in offline storage yet. Keep this page open and try saving again.");
       }
       setOfflineReady(true);
       setMediaStatus("The Smart Wash location video is saved and verified for offline playback on this device.");
     } catch (error) {
       await checkOfflineMedia();
-      setMediaStatus(error instanceof Error ? error.message : "Videos could not be saved for offline use. Try again while connected.");
+      setMediaStatus(error instanceof Error ? error.message : "The location video could not be saved for offline use. Try again while connected.");
     } finally {
       setSaving(false);
     }
@@ -139,10 +139,10 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
     : { emoji: "🌤️", title: "Whatever the weather, we've got your ride.", detail: "Make your next wash easy: join the queue or plan a return visit." };
 
   return <>
-    <section className="big-brothers-section location-weather-section" aria-label="Local weather">
+    <section className="big-brothers-section location-weather-section" aria-label="Gaborone weather">
       <div className="bb-weather-card">
         <div className="bb-weather-main">
-          <p className="big-brothers-eyebrow">🚘 SMART WASH DAILY DRIVE · BOTSWANA</p>
+          <p className="big-brothers-eyebrow">🚘 SMART WASH DAILY DRIVE · GABORONE</p>
           <h3 className="bb-daily-greeting">{greeting}</h3>
           <p className="bb-daily-message"><span aria-hidden="true">{weatherMood.emoji}</span> <strong>{weatherMood.title}</strong> {weatherMood.detail}</p>
           <p className="bb-weather-condition-label">CURRENT CONDITIONS</p>
