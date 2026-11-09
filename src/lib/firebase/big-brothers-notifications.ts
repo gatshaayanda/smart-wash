@@ -5,7 +5,7 @@ import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import { getIdToken } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 
-export async function enableVulaPushNotifications(uid: string) {
+export async function enableSmartWashPushNotifications(uid: string) {
   const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
   if (!vapidKey) throw new Error("Push reminders need the Firebase Cloud Messaging Web Push certificate key in NEXT_PUBLIC_FIREBASE_VAPID_KEY.");
   if (!("Notification" in window)) throw new Error("This browser does not support web notifications.");
