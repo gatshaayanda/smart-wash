@@ -88,7 +88,7 @@ export default function PwaRegister() {
     {offline && <div className="offlineBanner" role="status" aria-live="polite">Offline · New requests stay on this device until the server confirms they have synced.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite">Reconnected · Smart Wash can reach the network again. Pending requests still need server confirmation.</div>}
     {installable && !installCardDismissed && <aside className="af-install-card" aria-label="Install Smart Wash">
-      <div className="af-install-brand"><span className="af-install-mark" aria-hidden="true">BB<span>✦</span></span><span><strong>SMART WASH</strong><small>SPARKLING KASI DEAL</small></span></div>
+      <div className="af-install-brand"><span className="af-install-mark" aria-hidden="true">SW<span>✦</span></span><span><strong>SMART WASH</strong><small>SPARKLING KASI DEAL</small></span></div>
       <button className="af-install-close" type="button" aria-label="Dismiss install prompt" onClick={() => setInstallCardDismissed(true)}>×</button>
       <button className="af-install-action" type="button" onClick={() => void install()}>Install Smart Wash <span aria-hidden="true">↗</span></button>
     </aside>}
