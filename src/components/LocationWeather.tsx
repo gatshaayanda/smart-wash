@@ -85,7 +85,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
     if (saving) return;
     setSaving(true);
     setOfflineReady(false);
-    setMediaStatus("Preparing the Smart Wash location video for offline playback. Keep this page open; the files total about 104 MB.");
+    setMediaStatus("Preparing the Smart Wash location video for offline playback. Keep this page open; the file is large; keep this page open while it saves.");
     try {
       const cache = await caches.open("smart-wash-media-v1");
       let completed = 0;
@@ -132,7 +132,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
   const greeting = localHour < 11 ? "Dumela!" : localHour < 17 ? "Eita!" : "Good evening!";
   const weatherMood = !weather ? { emoji: "🤝", title: "Smart Wash has your back.", detail: "Live conditions are taking a break. You can still request a wash and the team will confirm availability." }
     : weather.weather_code >= 51 && weather.weather_code <= 82 ? { emoji: "🌧️", title: "A wet one out there.", detail: "Take your time. You can request a wash and check the best timing with the team." }
-    : weather.weather_code >= 95 ? { emoji: "⛈️", title: "Stormy skies in Gaborone.", detail: "Put safety first. Check with the team before making the trip." }
+    : weather.weather_code >= 95 ? { emoji: "⛈️", title: "Stormy skies over the area.", detail: "Put safety first. Check with the team before making the trip." }
     : weather.wind_speed_10m >= 25 ? { emoji: "💨", title: "Wind and dust on the move.", detail: "Been on dusty roads? Your ride deserves a little care." }
     : weather.temperature_2m >= 32 ? { emoji: "☀️", title: "It's bringing the heat!", detail: "Keep cool out there. When you're ready, bring your ride through." }
     : weather.weather_code === 0 ? { emoji: "☀️", title: "Looking like a bright day.", detail: "A good time to give your ride some attention. The Smart Wash team is here to help." }
