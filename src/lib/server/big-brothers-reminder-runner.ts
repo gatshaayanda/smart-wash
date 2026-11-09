@@ -14,7 +14,7 @@ function adminApp() {
   return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-reminders");
 }
 
-export async function runVulaBookingReminders() {
+export async function runSmartWashBookingReminders() {
   const app = adminApp();
   const db = getFirestore(app);
   const messaging = getMessaging(app);
