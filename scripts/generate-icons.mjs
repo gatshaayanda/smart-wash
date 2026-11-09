@@ -3,7 +3,7 @@ import path from "node:path";
 import zlib from "node:zlib";
 
 const output = path.join(process.cwd(), "public");
-const palette = { background: [24, 24, 24, 255], red: [237, 28, 36, 255], white: [255, 255, 255, 255] };
+const palette = { background: [10, 25, 49, 255], red: [39, 143, 186, 255], white: [255, 255, 255, 255] };
 
 function crc32(buffer) {
   let crc = 0xffffffff;
@@ -27,7 +27,9 @@ function insideRoundedRect(x, y, size, radius) {
   const dx = x - cx, dy = y - cy;
   return dx * dx + dy * dy <= radius * radius || (x >= radius && x < size - radius) || (y >= radius && y < size - radius);
 }
-const glyphB = ["11110","10001","10001","11110","10001","10001","11110"];
+const glyphS = ["01111","10000","10000","01110","00001","00001","11110"];
+const glyphW = ["10001","10001","10001","10101","10101","10101","01010"];
+const glyphs = [glyphS, glyphW];
 function render(size) {
   const pixels = Buffer.alloc(size * size * 4);
   const radius = Math.round(size * 0.22);
@@ -45,9 +47,9 @@ function render(size) {
     for (let x = 0; x < size; x++) put(x, y, insideRoundedRect(x, y, size, radius) ? palette.background : [0,0,0,0]);
   }
   for (let letter = 0; letter < 2; letter++) {
-    for (let row = 0; row < glyphB.length; row++) {
-      for (let col = 0; col < glyphB[row].length; col++) {
-        if (glyphB[row][col] !== "1") continue;
+    for (let row = 0; row < glyphs[letter].length; row++) {
+      for (let col = 0; col < glyphs[letter][row].length; col++) {
+        if (glyphs[letter][row][col] !== "1") continue;
         for (let dy = 0; dy < scale; dy++) for (let dx = 0; dx < scale; dx++) {
           put(left + (letter * 6 + col) * scale + dx, top + row * scale + dy, palette.red);
         }
@@ -76,6 +78,6 @@ function render(size) {
   ]);
 }
 for (const size of [180, 192, 512]) {
-  fs.writeFileSync(path.join(output, `big-brothers-icon-${size}.png`), render(size));
+  fs.writeFileSync(path.join(output, `smart-wash-icon-${size}.png`), render(size));
 }
-console.log("Generated Big Brothers Car Wash PWA icons (180, 192 and 512 px).");
+console.log("Generated Smart Wash PWA icons (180, 192 and 512 px).");
