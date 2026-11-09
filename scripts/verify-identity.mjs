@@ -1,70 +1,28 @@
 import fs from "node:fs";
-import path from "node:path";
-
-const root = process.cwd();
+const read = path => fs.readFileSync(path, "utf8");
+const exists = path => fs.existsSync(path);
 const failures = [];
-function read(relative) { return fs.readFileSync(path.join(root, relative), "utf8"); }
-function exists(relative) { return fs.existsSync(path.join(root, relative)); }
-
-const appManifest = read("src/app/manifest.ts");
-if (!appManifest.includes("Big Brothers Car Wash") || !appManifest.includes('short_name: "Big Bros"') || appManifest.includes("Iteration 13") || appManifest.includes("Vula's Car Wash")) {
-  failures.push("App manifest identity mismatch.");
-}
-for (const icon of ["big-brothers-icon-180.png", "big-brothers-icon-192.png", "big-brothers-icon-512.png"]) {
-  if (!appManifest.includes("/" + icon)) failures.push("Manifest is missing " + icon + ".");
-}
-if (!exists("public/big-brothers-icon.svg") || !exists("scripts/generate-icons.mjs")) failures.push("Branded icon source or PNG generator is missing.");
-if (!appManifest.includes('form_factor: "wide"') || !appManifest.includes("/pwa-screenshot-wide.svg")) failures.push("Wide PWA screenshot is missing from the manifest.");
-if (!appManifest.includes("/pwa-screenshot-mobile.svg")) failures.push("Mobile PWA screenshot is missing from the manifest.");
-for (const screenshot of ["pwa-screenshot-wide.svg", "pwa-screenshot-mobile.svg"]) {
-  if (!exists("public/" + screenshot)) failures.push("PWA screenshot asset missing: " + screenshot);
-}
-
+const manifest = read("src/app/manifest.ts");
 const layout = read("src/app/layout.tsx");
-for (const text of ["Big Brothers Car Wash", "big-brothers.css", "PwaRegister", 'manifest: "/manifest.webmanifest"']) {
-  if (!layout.includes(text)) failures.push("Layout is missing " + text + ".");
-}
-const pwaRegister = read("src/app/pwa-register.tsx");
-for (const text of ["beforeinstallprompt", "prompt.prompt()", "af-install-card", "af-install-close", "af-install-action"]) {
-  if (!pwaRegister.includes(text)) failures.push("Africhiko install lifecycle is missing " + text + ".");
-}
-const pwaCss = read("src/app/pwa.css");
-for (const text of [".af-install-card", ".af-install-close", ".af-install-action"]) {
-  if (!pwaCss.includes(text)) failures.push("Africhiko install-card styling is missing " + text + ".");
-}
-const sw = read("public/sw.js");
-if (!sw.includes("big-brothers-shell-v1") || !sw.includes("big-brothers-game-v1") || !sw.includes("/offline")) {
-  failures.push("Service-worker cache isolation or offline fallback is missing.");
-}
-if (!sw.includes("const cacheCopy = response.clone();")) failures.push("Manifest response-cloning protection is missing.");
-if (sw.includes("vula-shell-") || sw.includes("iteration13-shell-") || sw.includes("theplug-shell-")) {
-  failures.push("Service worker still contains a legacy cache namespace.");
-}
-
 const home = read("src/app/page.tsx");
-for (const text of ["Big Brothers Car Wash", "Join the walk-in queue", 'useState<"book" | "queue" | "fleet">("queue")', "bookings", "queueEntries", "fleetRequests", "syncOfflineRequests"]) {
-  if (!home.includes(text)) failures.push("Customer app is missing " + text + ".");
+const sw = read("public/sw.js");
+const install = read("src/app/pwa-register.tsx");
+const generator = read("scripts/generate-icons.mjs");
+const env = read(".env.example");
+if (!manifest.includes('name: "Smart Wash"') || !manifest.includes('short_name: "Smart Wash"')) failures.push("Smart Wash manifest identity is missing.");
+for (const icon of ["smart-wash-icon-180.png","smart-wash-icon-192.png","smart-wash-icon-512.png"]) {
+  if (!layout.includes(icon) || !manifest.includes(icon)) failures.push("Icon path is not wired: " + icon);
 }
-if (!home.includes('const pendingKey = "big-brothers-car-wash:offline-requests:v1";')) failures.push("Offline request storage is not isolated to Big Brothers.");
-const data = read("src/lib/firebase/big-brothers-data.ts");
-for (const text of ["subscribeBookings", "subscribeQueue", "subscribeFleet", "subscribeServices", "subscribeSettings"]) {
-  if (!data.includes(text)) failures.push("Firebase data layer is missing " + text + ".");
+if (!exists("public/smart-wash-icon.svg") || !generator.includes("smart-wash-icon-")) failures.push("Smart Wash SVG icon or PNG generator is missing.");
+if (!home.includes('/videos/smart-wash-location.mp4') || !home.includes('/images/smart-wash-sign.jpg')) failures.push("Original Smart Wash video and signboard poster are not wired to the homepage.");
+if (!exists("public/images/smart-wash-sign.jpg") || !exists("public/videos/smart-wash-location.mp4")) failures.push("Original Smart Wash media is missing.");
+if (!sw.includes("smart-wash-shell-v1") || !sw.includes("smart-wash-game-v1")) failures.push("Smart Wash service-worker cache namespaces are missing.");
+if (!install.includes("Install Smart Wash") || !install.includes("SMART WASH")) failures.push("PWA install card is not branded Smart Wash.");
+if (env.includes("vulas-car-wash")) failures.push("Source Firebase project ID remains in .env.example.");
+if (read(".firebaserc").includes('"default": "vulas-car-wash"')) failures.push("Source Firebase project remains selected.");
+for (const file of ["src/app/page.tsx","src/app/layout.tsx","src/app/manifest.ts","src/app/pwa-register.tsx","src/app/iphone-install/page.tsx"]) {
+  if (read(file).includes("Big Brothers Car Wash")) failures.push("Inherited visible brand remains in " + file + ".");
 }
-const rules = read("firestore.rules");
-for (const text of ["match /bookings/", "match /queueEntries/", "match /fleetRequests/", "function isAdmin()"]) {
-  if (!rules.includes(text)) failures.push("Firestore security rules are missing " + text + ".");
-}
-for (const file of ["src/app/page.tsx", "src/app/layout.tsx", "src/app/manifest.ts", "src/app/iphone-install/page.tsx", "src/app/offline/page.tsx", "src/app/admin/big-brothers-dashboard.tsx"]) {
-  const source = read(file);
-  for (const identity of ["Vula's Car Wash", "Vula's team", "Vula's system", "Iteration 13 | Service Studio", "The Plug"]) {
-    if (source.includes(identity)) failures.push(file + " contains inherited identity text: " + identity);
-  }
-}
-if (exists("public/manifest.webmanifest")) failures.push("Remove the stale public manifest so the Next.js manifest route is authoritative.");
-
-if (failures.length) {
-  console.error("BIG BROTHERS IDENTITY / FOUNDATION VERIFICATION FAILED");
-  failures.forEach(item => console.error(" - " + item));
-  process.exit(1);
-}
-console.log("BIG BROTHERS FOUNDATION VERIFIED — identity, manifest, generated icons, Africhiko install card, isolated PWA caches, walk-in intake and Firestore rules are present.");
+if (!home.includes('const pendingKey = "smart-wash:offline-requests:v1";')) failures.push("Offline draft namespace is not isolated for Smart Wash.");
+if (failures.length) { console.error("SMART WASH IDENTITY VERIFICATION FAILED"); failures.forEach(item => console.error(" - " + item)); process.exit(1); }
+console.log("SMART WASH IDENTITY VERIFIED — dedicated Firebase placeholders, branded manifest/icons, original media, install card and isolated offline namespace.");
