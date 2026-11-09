@@ -26,7 +26,7 @@ This repository must not reuse the Big Brothers/Vula Firebase project. Create a 
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - Optional: `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`, `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
 - Server-only: `FIREBASE_PROJECT_ID`, `FIREBASE_ADMIN_KEY`
-- Existing handler secret names retained for compatibility: `BIG_BROTHERS_OPERATIONS_WORD`, `BIG_BROTHERS_REMINDER_CRON_SECRET`. Use new Smart Wash secrets only.
+- Existing handler secret names retained for compatibility: `SMART_WASH_OPERATIONS_WORD`, `SMART_WASH_REMINDER_CRON_SECRET`. Use new Smart Wash secrets only.
 
 The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. Replace the placeholder in `.firebaserc` before using Firebase CLI. Never reuse source credentials or customer records.
 
