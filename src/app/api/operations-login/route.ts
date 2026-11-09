@@ -6,14 +6,17 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 function getAdminApp() {
-  const existing = getApps().find(app => app.name === "big-brothers-operations");
+  const existing = getApps().find(app => app.name === "smart-wash-operations");
   if (existing) return existing;
   const raw = process.env.FIREBASE_ADMIN_KEY;
   if (!raw) throw new Error("Missing FIREBASE_ADMIN_KEY environment variable.");
   let serviceAccount: Record<string, unknown>;
   try { serviceAccount = JSON.parse(raw) as Record<string, unknown>; }
   catch { throw new Error("FIREBASE_ADMIN_KEY must contain valid service-account JSON."); }
-  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId: "vulas-car-wash" }, "big-brothers-operations");
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  if (!projectId) throw new Error("FIREBASE_PROJECT_ID must point to the dedicated Smart Wash Firebase project.");
+  if (serviceAccount.project_id && serviceAccount.project_id !== projectId) throw new Error("FIREBASE_ADMIN_KEY belongs to a different Firebase project.");
+  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-operations");
 }
 function matchesWord(input: string, expected: string) {
   const a = createHash("sha256").update(input).digest(), b = createHash("sha256").update(expected).digest();
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null) as { word?: unknown } | null;
     const word = typeof body?.word === "string" ? body.word : "";
     if (!matchesWord(word, expected)) return NextResponse.json({ error: "Access denied. Check the staff access word and try again." }, { status: 401 });
-    const app = getAdminApp(), uid = "big-brothers-operations-owner";
+    const app = getAdminApp(), uid = "smart-wash-operations-owner";
     const adminAuth = getAuth(app);
     await getFirestore(app).collection("admins").doc(uid).set({ role: "owner", updatedAt: new Date().toISOString() }, { merge: true });
     const bbStaffSessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
     const token = await adminAuth.createCustomToken(uid, { bbStaffSessionExpiresAt });
     return NextResponse.json({ token }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Vula staff login failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash staff login failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ error: "Staff sign-in is temporarily unavailable. Check server configuration." }, { status: 500 });
   }
 }
