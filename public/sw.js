@@ -48,14 +48,14 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "smart-wash-shell-v1";
+const CACHE_VERSION = "smart-wash-shell-v2";
 const GAME_CACHE = "smart-wash-game-v1";
 const MEDIA_CACHE = "smart-wash-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 160;
 const PUBLIC_PAGE_LIMIT = 16;
 const APP_SHELL = [
-  "/", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
+  "/", "/account", "/admin", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
   "/smart-wash-icon.svg", "/smart-wash-icon-180.png", "/smart-wash-icon-192.png",
   "/smart-wash-icon-512.png", "/images/smart-wash-sign.jpg", "/manifest.webmanifest"
 ];
@@ -65,6 +65,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     await precacheShell();
     await precacheRacingAssets();
+    await precacheSmartWashMedia();
     // Let an existing app show its Refresh action before activating an update.
     // First-time installs still activate normally because there is no older worker.
   })());
@@ -101,6 +102,18 @@ async function precacheShell() {
   // worker and retry on a later visit if any referenced JS/CSS cannot be cached.
   await Promise.all([...discovered].map((path) => fetchAndCache(path, SHELL_CACHE, { required: true })));
   await trimCache(SHELL_CACHE, STATIC_LIMIT + PUBLIC_PAGE_LIMIT);
+}
+
+async function precacheSmartWashMedia() {
+  // The owner-supplied location film is part of the core Smart Wash experience.
+  // Treat it as optional for installation so a constrained connection/quota
+  // cannot prevent the PWA shell from installing.
+  try {
+    const response = await fetchAndCache("/videos/smart-wash-location.mp4", MEDIA_CACHE);
+    if (response) await trimCache(MEDIA_CACHE, 4);
+  } catch (error) {
+    console.warn("Smart Wash location film could not be cached yet; it will retry on a later visit.", error);
+  }
 }
 
 async function precacheRacingAssets() {
@@ -159,7 +172,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     const obsolete = new Set([
-      "smart-wash-shell-v0", "smart-wash-shell-v0-old", "smart-wash-shell-v0-newer",
+      "smart-wash-shell-v0", "smart-wash-shell-v0-old", "smart-wash-shell-v0-newer", "smart-wash-shell-v1",
       "smart-wash-game-v0", "smart-wash-game-v0-newer", "smart-wash-game-v0-old",
       "smart-wash-media-v0", "smart-wash-media-v0-old"
     ]);
@@ -181,9 +194,21 @@ self.addEventListener("fetch", (event) => {
 
   // Never serve cached private pages as if they were the current authenticated response.
   if (isNavigation && isPrivate) {
-    event.respondWith(fetch(request).catch(async () => {
+    // Private HTML is cached only after an authenticated visit in this browser
+    // profile. Never fall back to another user's route or to public homepage.
+    event.respondWith(fetch(request).then(async (response) => {
+      if (response.ok) {
+        const cache = await caches.open(SHELL_CACHE);
+        await cache.put(request, response.clone());
+        await trimCache(SHELL_CACHE, STATIC_LIMIT + PUBLIC_PAGE_LIMIT + 12);
+      }
+      return response;
+    }).catch(async () => {
       const cache = await caches.open(SHELL_CACHE);
-      return await cache.match("/offline") || Response.error();
+      return await cache.match(request, { ignoreSearch: true })
+        || await cache.match(url.pathname)
+        || await cache.match("/offline")
+        || Response.error();
     }));
     return;
   }
