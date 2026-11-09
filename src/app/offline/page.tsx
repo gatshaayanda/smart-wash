@@ -23,12 +23,18 @@ export default function OfflinePage() {
         </article>
         <article>
           <span className="location-number">03</span>
-          <h3>Reconnect to finish syncing</h3>
-          <p>Walk-in, booking and fleet requests saved while offline stay on this device until a connection returns. Smart Wash only receives them after the shared system confirms the save.</p>
-          <Link className="text-link" href="/">Return to the wash bay ↗</Link>
+          <h3>Customer account</h3>
+          <p>Your previously opened account can show customer details and records already saved on this device. New server receipts, messages and sign-in changes need a connection.</p>
+          <Link className="text-link" href="/account">Open customer account ↗</Link>
+        </article>
+        <article>
+          <span className="location-number">04</span>
+          <h3>Staff operations</h3>
+          <p>Staff can reopen the admin workspace previously loaded on this device and review Firestore data cached here. Firestore edits can queue locally and sync after reconnection; server-only actions such as issuing receipts, sending notifications and changing booking capacity need the network.</p>
+          <Link className="text-link" href="/admin">Open staff operations ↗</Link>
         </article>
       </div>
-      <p className="big-brothers-notice pending">Offline: the cached homepage and racing practice game can work on this device. Walk-in, booking and fleet drafts saved here can sync after reconnection. Live prices, shared queue updates, account data, current weather and booking availability need a connection. A saved request is not visible to staff until the server confirms it; a booking remains pending until the team confirms it.</p>
+      <p className="big-brothers-notice pending">Offline availability depends on a successful earlier visit on this device. The homepage, previously opened customer account and staff workspace, cached Firestore records, racing assets and the Smart Wash location film are prepared for offline use. Firestore-supported changes may wait in the device cache and sync when online. UploadThing media uploads, server API actions, receipts, notifications, live availability, weather and shared updates cannot complete offline. A locally saved request is not visible to staff until the server confirms it; a booking remains pending until the team confirms it.</p>
       <p className="big-brothers-actions">
         <Link className="big-brothers-button primary" href="/">Return to Smart Wash ↗</Link>
       </p>
