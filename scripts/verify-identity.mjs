@@ -40,6 +40,7 @@ if (!weather.includes("/videos/smart-wash-location.mp4") || /\/videos\/(Bays|Lef
 if (receiptServer.includes("vulas-car-wash") || loginRoute.includes("vulas-car-wash")) failures.push("A Firebase Admin handler still targets the source project.");
 if (/Big Brothers|BIG BROTHERS|Vula Car Wash/.test(racingCareer) || /Big Brothers Car Wash|Big Brothers staff/.test(adminGate)) failures.push("Inherited source branding remains in Smart Wash racing or staff access.");
 if (weather.includes("-24.6282") || weather.includes("25.9231") || bookingWeather.includes("-24.6282") || bookingWeather.includes("25.9231")) failures.push("Weather still uses inherited source-business coordinates.");
+if (home.includes("Africa/Botswana")) failures.push("Homepage still uses an invalid Botswana time-zone identifier.");
 if (!weather.includes("locationConfigured") || !bookingWeather.includes("locationLabel")) failures.push("Weather must use owner-configured Smart Wash location settings.");
 if (availability.includes("settings[capacityKey] ?? 4") || availability.includes(": 4;")) failures.push("Booking availability still assumes inherited staffing capacity.");
 if (!serviceData.includes("export async function deleteService") || !serviceData.includes("deleteField()")) failures.push("Service CRUD must support deletion and clearing a price safely.");
