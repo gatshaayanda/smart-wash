@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Saved receipt could not be loaded.";
     const status = /staff sign-in/i.test(message) ? 401 : /staff access/i.test(message) ? 403 : /FIREBASE_ADMIN_KEY|credentials|service-account/i.test(message) ? 503 : 400;
-    console.error("Big Brothers saved receipt lookup failed:", message);
+    console.error("Smart Wash saved receipt lookup failed:", message);
     return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Receipt link could not be created.";
     const status = /staff sign-in/i.test(message) ? 401 : /staff access/i.test(message) ? 403 : /FIREBASE_ADMIN_KEY|credentials|service-account/i.test(message) ? 503 : 400;
-    console.error("Big Brothers receipt creation failed:", message);
+    console.error("Smart Wash receipt creation failed:", message);
     return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
