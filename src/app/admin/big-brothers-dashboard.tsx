@@ -13,15 +13,15 @@ type EngagementLead={id:string;name:string;phone:string;openedAt:string;openCoun
 type EngagementMetrics={publicViews7d:number;trackedAccounts:number;accountOpens7d:number;bookingRequests:number;walkInEntries:number;followUpDue:number};
 
 const SIGNBOARD_PRICED_SERVICES = [
-  { id: "smart-wash-wash-and-go", name: "Wash & Go", category: "Car wash", description: "Quick exterior wash.", price: 25 },
-  { id: "smart-wash-smart-polishing", name: "Smart Polishing", category: "Detailing", description: "Smart polishing service.", price: 80 },
-  { id: "smart-wash-full-smart-polishing-interior", name: "Full Smart Polishing & Interior", category: "Detailing", description: "Full smart polishing with interior care.", price: 100 },
-  { id: "smart-wash-mini-valet", name: "Mini Valet", category: "Valet", description: "Mini valet service.", price: 200 },
-  { id: "smart-wash-full-interior-valet", name: "Full Interior Valet", category: "Valet", description: "Full interior valet service.", price: 450 },
-  { id: "smart-wash-glazing-three-stages", name: "Glazing 3 Stages", category: "Detailing", description: "Three-stage glazing service.", price: 480 },
-  { id: "smart-wash-leather-care", name: "Leather Care", category: "Interior care", description: "Leather care service.", price: 50 },
-  { id: "smart-wash-carpet-cleaning", name: "Carpet Cleaning From", category: "Interior care", description: "Carpet cleaning; signboard price is a starting price.", price: 80 },
-  { id: "smart-wash-sofas-four-sets", name: "Sofas (4 Sets)", category: "Upholstery", description: "Sofa cleaning for four sets.", price: 400 },
+  { id: "smart-wash-wash-and-go", name: "Wash & Go", category: "Car wash", description: "Listed on the Smart Wash signboard.", price: 25 },
+  { id: "smart-wash-smart-polishing", name: "Smart Polishing", category: "Detailing", description: "Listed on the Smart Wash signboard.", price: 80 },
+  { id: "smart-wash-full-smart-polishing-interior", name: "Full Smart Polishing & Interior", category: "Detailing", description: "Listed on the Smart Wash signboard.", price: 100 },
+  { id: "smart-wash-mini-valet", name: "Mini Valet", category: "Valet", description: "Listed on the Smart Wash signboard.", price: 200 },
+  { id: "smart-wash-full-interior-valet", name: "Full Interior Valet", category: "Valet", description: "Listed on the Smart Wash signboard.", price: 450 },
+  { id: "smart-wash-glazing-three-stages", name: "Glazing 3 Stages", category: "Detailing", description: "Listed on the Smart Wash signboard.", price: 480 },
+  { id: "smart-wash-leather-care", name: "Leather Care", category: "Interior care", description: "Listed on the Smart Wash signboard.", price: 50 },
+  { id: "smart-wash-carpet-cleaning", name: "Carpet Cleaning From", category: "Interior care", description: "Starting price shown on the signboard; final amount confirmed by the team.", price: 80 },
+  { id: "smart-wash-sofas-four-sets", name: "Sofas (4 Sets)", category: "Upholstery", description: "Four sets, as listed on the Smart Wash signboard.", price: 400 },
 ] as const;
 
 export default function VulaDashboard() {
