@@ -86,12 +86,12 @@ export default function PwaRegister() {
 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite">Offline · New requests stay on this device until the server confirms they have synced.</div>}
-    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite">Reconnected · Big Brothers Car Wash can reach the network again. Pending requests still need server confirmation.</div>}
-    {installable && !installCardDismissed && <aside className="af-install-card" aria-label="Install Big Brothers Car Wash">
-      <div className="af-install-brand"><span className="af-install-mark" aria-hidden="true">BB<span>✦</span></span><span><strong>BIG BROTHERS</strong><small>CAR WASH · G-WEST</small></span></div>
+    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite">Reconnected · Smart Wash can reach the network again. Pending requests still need server confirmation.</div>}
+    {installable && !installCardDismissed && <aside className="af-install-card" aria-label="Install Smart Wash">
+      <div className="af-install-brand"><span className="af-install-mark" aria-hidden="true">BB<span>✦</span></span><span><strong>SMART WASH</strong><small>SPARKLING KASI DEAL</small></span></div>
       <button className="af-install-close" type="button" aria-label="Dismiss install prompt" onClick={() => setInstallCardDismissed(true)}>×</button>
-      <button className="af-install-action" type="button" onClick={() => void install()}>Install Big Brothers <span aria-hidden="true">↗</span></button>
+      <button className="af-install-action" type="button" onClick={() => void install()}>Install Smart Wash <span aria-hidden="true">↗</span></button>
     </aside>}
-    {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Big Brothers Car Wash update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
+    {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Smart Wash update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
   </>;
 }
