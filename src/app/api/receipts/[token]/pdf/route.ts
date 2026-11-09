@@ -18,7 +18,7 @@ export async function GET(_request: Request, context: { params: Promise<{ token:
       },
     });
   } catch (error) {
-    console.error("Big Brothers PDF receipt failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash PDF receipt failed:", error instanceof Error ? error.message : "unknown error");
     return new Response("Receipt PDF is temporarily unavailable.", { status: 500, headers: { "Cache-Control": "no-store", "Content-Type": "text/plain; charset=utf-8" } });
   }
 }
