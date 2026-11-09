@@ -1,10 +1,14 @@
-# UploadThing file size limits
+# Smart Wash UploadThing limits
 
-Iteration 13's UploadThing router is configured for one file per upload:
+The Smart Wash UploadThing router is configured for one file per upload:
 - **Images:** up to 4 MB
 - **Videos:** up to 16 MB
 - **PDFs:** up to 4 MB
 
-These are this repository's configured endpoint limits, not a guarantee about the connected UploadThing account's plan, environment configuration, or network throughput. The admin media picker validates image/video type and size before upload and reports progress when UploadThing provides progress events. Uploading requires a working internet connection; selecting or capturing a file offline does not upload or publish it.
+UploadThing handles service media, staff gallery publishing and receipt-linked customer photo/video submissions. Customer media is stored as an UploadThing URL and file key in Firestore after the receipt-token endpoint validates the submission and explicit public-display consent. Staff moderation is required before customer submissions can appear in the public gallery.
 
-If an upload stalls or is rejected despite meeting these configured limits, check the deployment's UploadThing credentials, endpoint logs, network connection, and current provider plan/settings. Do not increase the limits without confirming the provider accepts them.
+These are the repository's configured endpoint limits, not a guarantee about the connected UploadThing account's plan, environment configuration, or network throughput. Uploading requires a working internet connection; selecting a file offline does not upload or publish it.
+
+If an upload stalls or is rejected despite meeting these configured limits, check the deployment's `UPLOADTHING_TOKEN`, UploadThing endpoint logs, network connection, and current provider plan/settings. Do not increase limits without confirming the provider accepts them.
+
+Firebase Storage is not part of the Smart Wash media workflow. Do not deploy Firebase Storage rules or add Firebase Storage upload dependencies.
