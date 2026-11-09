@@ -1224,3 +1224,21 @@
 .smart-wash-signboard-copy>p:not(.big-brothers-eyebrow){max-width:520px;color:#4f5d68;font-size:14px;line-height:1.7;margin:0 0 18px}
 .smart-wash-signboard-copy>span{display:inline-flex;align-items:center;gap:8px;color:#1e5c80;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 @media(max-width:680px){.smart-wash-signboard{grid-template-columns:1fr;gap:20px;padding-top:26px;padding-bottom:28px}.smart-wash-signboard-media{max-width:260px}.smart-wash-signboard-copy{text-align:center}.smart-wash-signboard-copy>p:not(.big-brothers-eyebrow){margin-left:auto;margin-right:auto}}
+
+
+.admin-service-catalogue-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 18px;align-items:center;border-color:#c7e5f0;background:#f1f8fb}
+.admin-service-catalogue-intro>div{min-width:0}
+.admin-service-catalogue-intro .big-brothers-eyebrow{margin:0 0 5px;color:#1e5c80}
+.admin-service-catalogue-intro h3{margin:0 0 5px}
+.admin-service-catalogue-intro p:not(.big-brothers-eyebrow){margin:0;color:#526776;font-size:12px;line-height:1.55}
+.admin-service-catalogue-intro>small{grid-column:1/-1;color:#526776;font-size:10px}
+.admin-service-record{display:grid;gap:12px}
+.admin-service-edit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;width:100%;min-width:0}
+.admin-service-edit label{display:grid;gap:5px;min-width:0;color:#294354;font-size:11px;font-weight:750}
+.admin-service-edit input,.admin-service-edit textarea{box-sizing:border-box;width:100%;min-width:0;min-height:40px;padding:9px 10px;border:1px solid #cbdce4;border-radius:8px;background:#fff;color:#142b3c;font:inherit;font-weight:500}
+.admin-service-edit textarea{min-height:40px;resize:vertical}
+.admin-service-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.admin-service-delete{min-height:38px;padding:8px 12px;border:1px solid #d9b9b9;border-radius:8px;background:#fff;color:#8b3030;font-size:11px;font-weight:750}
+.admin-service-status{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid #e4edf1;padding-top:9px;color:#476171;font-size:10px}
+.admin-service-status strong{letter-spacing:.1em;font-size:9px}
+@media(max-width:620px){.admin-service-catalogue-intro{grid-template-columns:1fr}.admin-service-catalogue-intro>button{width:100%}.admin-service-edit{grid-template-columns:1fr}.admin-service-actions{display:grid;grid-template-columns:1fr 1fr}.admin-service-actions button{width:100%}.admin-service-delete{grid-column:1/-1}}
