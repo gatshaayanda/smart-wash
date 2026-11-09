@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "This job could not be claimed.";
     const status = /sign in|token/i.test(message) ? 401 : /already been claimed/i.test(message) ? 409 : /invalid|expired|revoked|completed wash/i.test(message) ? 404 : 500;
-    console.error("Big Brothers receipt claim failed:", message);
+    console.error("Smart Wash receipt claim failed:", message);
     return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
