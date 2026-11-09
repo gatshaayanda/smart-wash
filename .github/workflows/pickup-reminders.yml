@@ -1,15 +1,13 @@
-name: The Plug pickup reminders
+name: Smart Wash booking reminders
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: the-plug-pickup-reminders
+  group: smart-wash-booking-reminders
   cancel-in-progress: false
 
 jobs:
@@ -17,13 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Call production reminder endpoint
+      - name: Call Smart Wash reminder endpoint
         env:
-          BOEMO_REMINDER_CRON_SECRET: ${{ secrets.BOEMO_REMINDER_CRON_SECRET }}
-          THE_PLUG_PUBLIC_URL: https://the-plug-pearl.vercel.app
+          SMART_WASH_REMINDER_CRON_SECRET: ${{ secrets.SMART_WASH_REMINDER_CRON_SECRET }}
+          SMART_WASH_PUBLIC_URL: ${{ vars.SMART_WASH_PUBLIC_URL }}
         run: |
-          test -n "$BOEMO_REMINDER_CRON_SECRET"
+          test -n "$SMART_WASH_REMINDER_CRON_SECRET"
+          test -n "$SMART_WASH_PUBLIC_URL"
           curl --fail-with-body --silent --show-error \
             -X POST \
-            -H "Authorization: Bearer $BOEMO_REMINDER_CRON_SECRET" \
-            "$THE_PLUG_PUBLIC_URL/api/notifications/reminders"
+            -H "Authorization: Bearer $SMART_WASH_REMINDER_CRON_SECRET" \
+            "$SMART_WASH_PUBLIC_URL/api/notifications/reminders"
