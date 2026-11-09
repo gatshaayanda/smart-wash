@@ -48,14 +48,17 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "smart-wash-shell-v2";
+const CACHE_VERSION = "smart-wash-shell-v3";
+const PRIVATE_CACHE = "smart-wash-private-v1";
+const PRIVATE_IDENTITY_CACHE = "smart-wash-private-identity-v1";
+const PRIVATE_IDENTITY_KEY = new URL("/__smart-wash/offline-identity", self.location.origin).href;
 const GAME_CACHE = "smart-wash-game-v1";
 const MEDIA_CACHE = "smart-wash-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 160;
 const PUBLIC_PAGE_LIMIT = 16;
 const APP_SHELL = [
-  "/", "/account", "/admin", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
+  "/", "/games", "/games/career", "/offline", "/iphone-install", "/iphone-install.svg",
   "/smart-wash-icon.svg", "/smart-wash-icon-180.png", "/smart-wash-icon-192.png",
   "/smart-wash-icon-512.png", "/images/smart-wash-sign.jpg", "/manifest.webmanifest"
 ];
@@ -70,6 +73,29 @@ self.addEventListener("install", (event) => {
     // First-time installs still activate normally because there is no older worker.
   })());
 });
+
+async function setOfflineIdentity(uid) {
+  const cache = await caches.open(PRIVATE_IDENTITY_CACHE);
+  await cache.put(PRIVATE_IDENTITY_KEY, new Response(uid, { headers: { "Content-Type": "text/plain" } }));
+}
+
+async function getOfflineIdentity() {
+  const cache = await caches.open(PRIVATE_IDENTITY_CACHE);
+  const response = await cache.match(PRIVATE_IDENTITY_KEY);
+  if (!response) return null;
+  const uid = (await response.text()).trim();
+  return /^[A-Za-z0-9_-]{1,128}$/.test(uid) ? uid : null;
+}
+
+async function clearOfflineIdentity() {
+  await Promise.all([caches.delete(PRIVATE_CACHE), caches.delete(PRIVATE_IDENTITY_CACHE)]);
+}
+
+function privatePageCacheKey(request, uid) {
+  const url = new URL(request.url);
+  url.searchParams.set("__smart_wash_offline_uid", uid);
+  return new Request(url.href, { method: "GET" });
+}
 
 async function fetchAndCache(path, cacheName, { required = false } = {}) {
   const cache = await caches.open(cacheName);
@@ -163,6 +189,8 @@ async function precacheRacingAssets() {
 
 self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data?.type === "SET_OFFLINE_IDENTITY" && typeof event.data.uid === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(event.data.uid)) event.waitUntil(setOfflineIdentity(event.data.uid));
+  if (event.data?.type === "CLEAR_OFFLINE_IDENTITY") event.waitUntil(clearOfflineIdentity());
   if (event.data?.type === "PRECACHE_RACING") {
     event.waitUntil(precacheRacingAssets());
   }
@@ -172,7 +200,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     const obsolete = new Set([
-      "smart-wash-shell-v0", "smart-wash-shell-v0-old", "smart-wash-shell-v0-newer", "smart-wash-shell-v1",
+      "smart-wash-shell-v0", "smart-wash-shell-v0-old", "smart-wash-shell-v0-newer", "smart-wash-shell-v1", "smart-wash-shell-v2",
       "smart-wash-game-v0", "smart-wash-game-v0-newer", "smart-wash-game-v0-old",
       "smart-wash-media-v0", "smart-wash-media-v0-old"
     ]);
@@ -192,24 +220,29 @@ self.addEventListener("fetch", (event) => {
   const isNavigation = request.mode === "navigate" || request.headers.get("accept")?.includes("text/html");
   const isPrivate = /^\/(?:account|requests|orders|admin|invite)(?:\/|$)/.test(url.pathname);
 
-  // Never serve cached private pages as if they were the current authenticated response.
+  // Authenticated HTML stays out of the shared public shell. Offline copies are
+  // scoped to the Firebase UID last confirmed by the app, not pathname alone.
   if (isNavigation && isPrivate) {
-    // Private HTML is cached only after an authenticated visit in this browser
-    // profile. Never fall back to another user's route or to public homepage.
-    event.respondWith(fetch(request).then(async (response) => {
-      if (response.ok) {
-        const cache = await caches.open(SHELL_CACHE);
-        await cache.put(request, response.clone());
-        await trimCache(SHELL_CACHE, STATIC_LIMIT + PUBLIC_PAGE_LIMIT + 12);
+    event.respondWith((async () => {
+      const uid = await getOfflineIdentity();
+      try {
+        const response = await fetch(request);
+        if (response.ok && uid) {
+          const cache = await caches.open(PRIVATE_CACHE);
+          await cache.put(privatePageCacheKey(request, uid), response.clone());
+          await trimCache(PRIVATE_CACHE, 24);
+        }
+        return response;
+      } catch {
+        if (uid) {
+          const cache = await caches.open(PRIVATE_CACHE);
+          const saved = await cache.match(privatePageCacheKey(request, uid));
+          if (saved) return saved;
+        }
+        const shell = await caches.open(SHELL_CACHE);
+        return await shell.match("/offline") || Response.error();
       }
-      return response;
-    }).catch(async () => {
-      const cache = await caches.open(SHELL_CACHE);
-      return await cache.match(request, { ignoreSearch: true })
-        || await cache.match(url.pathname)
-        || await cache.match("/offline")
-        || Response.error();
-    }));
+    })());
     return;
   }
 

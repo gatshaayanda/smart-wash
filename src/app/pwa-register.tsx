@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase/client";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -35,6 +37,13 @@ export default function PwaRegister() {
     window.addEventListener("beforeinstallprompt", installPrompt);
 
     let registration: ServiceWorkerRegistration | null = null;
+    const stopAuthIdentity = onAuthStateChanged(auth, current => {
+      void navigator.serviceWorker?.ready.then(ready => {
+        ready.active?.postMessage(current
+          ? { type: "SET_OFFLINE_IDENTITY", uid: current.uid }
+          : { type: "CLEAR_OFFLINE_IDENTITY" });
+      }).catch(() => undefined);
+    });
     const inspect = () => {
       if (registration?.waiting && navigator.serviceWorker.controller) setUpdateReady(registration.waiting);
     };
@@ -62,6 +71,7 @@ export default function PwaRegister() {
       window.removeEventListener("offline", offlineNow);
       window.removeEventListener("beforeinstallprompt", installPrompt);
       navigator.serviceWorker?.removeEventListener("controllerchange", controllerChange);
+      stopAuthIdentity();
     };
   }, []);
 
