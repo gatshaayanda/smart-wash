@@ -38,7 +38,7 @@ export async function GET(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Saved receipts could not be loaded.";
     const status = /FIREBASE_ADMIN_KEY|credentials|service-account/i.test(message) ? 503 : 401;
-    console.error("Big Brothers customer receipts lookup failed:", message);
+    console.error("Smart Wash customer receipts lookup failed:", message);
     return NextResponse.json({ error: status === 503 ? "Saved receipts are temporarily unavailable because secure server access is not configured." : "Saved receipts could not be loaded. Sign in again and retry." }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }
