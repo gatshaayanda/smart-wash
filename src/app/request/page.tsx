@@ -1,7 +1,3 @@
 import { redirect } from "next/navigation";
-
-export const metadata = { title: "Service request", description: "Start a service request from the Iteration 13 Service Studio." };
-
-export default function RequestPage() {
-  redirect("/#service-order");
-}
+export const metadata = { title: "Book a wash · Smart Wash", description: "Choose a Smart Wash service and request a wash." };
+export default function RequestPage() { redirect("/#request"); }
