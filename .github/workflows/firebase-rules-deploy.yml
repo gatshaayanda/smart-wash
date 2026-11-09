@@ -1,22 +1,13 @@
-name: Deploy The Plug Firebase rules
+name: Deploy Smart Wash Firebase rules
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "firestore.rules"
-      - "storage.rules"
-      - "firebase.json"
-      - ".firebaserc"
-      - ".github/workflows/firebase-rules-deploy.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: the-plug-firebase-rules-deploy
+  group: smart-wash-firebase-rules-deploy
   cancel-in-progress: false
 
 jobs:
@@ -43,11 +34,13 @@ jobs:
           umask 077
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
 
-      - name: Deploy The Plug Firestore rules
+      - name: Deploy Smart Wash Firestore rules
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: |
           test -n "${{ secrets.FIREBASE_PROJECT_ID }}"
+          test "${{ secrets.FIREBASE_PROJECT_ID }}" != "vulas-car-wash"
+          test "${{ secrets.FIREBASE_PROJECT_ID }}" != "YOUR_SMART_WASH_FIREBASE_PROJECT_ID"
           firebase deploy --only firestore:rules --project "${{ secrets.FIREBASE_PROJECT_ID }}" --non-interactive
 
       - name: Check whether Storage rules changed
