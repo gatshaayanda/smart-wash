@@ -18,19 +18,19 @@ export default function OfflinePage() {
         <article>
           <span className="location-number">02</span>
           <h3>Take a racing break</h3>
-          <p>Big Brothers Racing may still open if the game page and its assets have been cached from an earlier visit. Solo progress can be device-local.</p>
-          <Link className="text-link" href="/games">Try Big Brothers Racing ↗</Link>
+          <p>Racing may still open if the game page and its assets have been cached from an earlier visit. Solo progress can be device-local.</p>
+          <Link className="text-link" href="/games">Try Racing ↗</Link>
         </article>
         <article>
           <span className="location-number">03</span>
           <h3>Reconnect to finish syncing</h3>
-          <p>Walk-in, booking and fleet requests saved while offline stay on this device until a connection returns. Big Brothers only receives them after the shared system confirms the save.</p>
+          <p>Walk-in, booking and fleet requests saved while offline stay on this device until a connection returns. Smart Wash only receives them after the shared system confirms the save.</p>
           <Link className="text-link" href="/">Return to the wash bay ↗</Link>
         </article>
       </div>
       <p className="big-brothers-notice pending">Offline: the cached homepage and racing practice game can work on this device. Walk-in, booking and fleet drafts saved here can sync after reconnection. Live prices, shared queue updates, account data, current weather and booking availability need a connection. A saved request is not visible to staff until the server confirms it; a booking remains pending until the team confirms it.</p>
       <p className="big-brothers-actions">
-        <Link className="big-brothers-button primary" href="/">Return to Big Brothers Car Wash ↗</Link>
+        <Link className="big-brothers-button primary" href="/">Return to Smart Wash ↗</Link>
       </p>
     </section>
   </main>;
