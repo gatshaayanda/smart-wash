@@ -28,7 +28,7 @@ This repository must not reuse the Big Brothers/Vula Firebase project. Create a 
 - Server-only: `FIREBASE_PROJECT_ID`, `FIREBASE_ADMIN_KEY`
 - Existing handler secret names retained for compatibility: `SMART_WASH_OPERATIONS_WORD`, `SMART_WASH_REMINDER_CRON_SECRET`. Use new Smart Wash secrets only.
 
-The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. Replace the placeholder in `.firebaserc` before using Firebase CLI. Never reuse source credentials or customer records.
+The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. Replace the placeholder in `.firebaserc` before using Firebase CLI. Never reuse source credentials or customer records. The Admin → Services screen can add the nine clearly legible signboard prices in one explicit action, then edit, hide/unhide or delete each service. Four incomplete signboard prices remain excluded until confirmed. Admin weather coordinates and booking capacity are intentionally unset until the owner configures the Smart Wash location and actual staffing.
 
 ## Development
 Node.js 20+ and npm:
@@ -39,7 +39,7 @@ npm run lint
 npx tsc --noEmit
 npm run build
 ```
-A successful push is not proof of a passing build or production deployment. Verify Firebase, authorization, WhatsApp handoff, notifications, PWA installation and offline behavior separately.
+A successful push is not proof of a passing build or production deployment. Verify Firebase, authorization, WhatsApp handoff, notifications, PWA installation, offline behavior, service catalogue CRUD, and owner-configured location/capacity settings separately.
 
 ## Service catalogue
 The signboard photograph is the source of truth. Some prices are not legible enough to transcribe safely from the supplied image. Do not seed guessed amounts; verify unclear prices with the owner before publishing them in Admin → Services.
