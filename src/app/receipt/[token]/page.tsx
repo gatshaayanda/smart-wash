@@ -1,8 +1,8 @@
 import ReceiptView from "./ReceiptView";
 
 export const metadata = {
-  title: "Secure wash receipt · Big Brothers Car Wash",
-  description: "View, download and securely claim a completed Big Brothers Car Wash receipt.",
+  title: "Secure wash receipt · Smart Wash",
+  description: "View, download and securely claim a completed Smart Wash receipt.",
   robots: { index: false, follow: false },
 };
 
