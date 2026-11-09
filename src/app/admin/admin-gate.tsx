@@ -18,7 +18,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   const [word, setWord] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [businessName, setBusinessName] = useState("Big Brothers Car Wash");
+  const [businessName, setBusinessName] = useState("Smart Wash");
 
   useEffect(() => {
     let stopAdmin: undefined | (() => void);
@@ -61,7 +61,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             setAuthorized(allowed);
             setChecking(false);
             if (!allowed) {
-              setError("This account is not enabled for Big Brothers staff operations.");
+              setError("This account is not enabled for Smart Wash staff operations.");
               void signOut(auth);
             }
           }, () => {
