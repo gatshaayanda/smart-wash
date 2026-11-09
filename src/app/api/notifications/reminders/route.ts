@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const { runVulaBookingReminders } = await import("@/lib/server/big-brothers-reminder-runner");
     return NextResponse.json({ ok: true, ...(await runVulaBookingReminders()) }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Vula booking reminder run failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash booking reminder run failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ ok: false, error: "Reminder run failed. Check server configuration and Firebase indexes." }, { status: 500 });
   }
 }
