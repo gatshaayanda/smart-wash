@@ -158,7 +158,7 @@ export function publicReceipt(receipt: Record<string, unknown>): PublicReceipt {
     receiptKind: String(receipt.receiptKind || "completed-receipt"),
     priceNote: String(receipt.priceNote || ""),
     businessName: "Smart Wash",
-    locationName: "G-West, Botswana",
+    locationName: "Location to be confirmed",
     customerName: String(receipt.customerName || ""),
     phone: String(receipt.phone || ""),
     email: String(receipt.email || ""),
