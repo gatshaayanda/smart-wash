@@ -142,7 +142,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    try { const raw = sessionStorage.getItem("big-brothers-repeat-wash"); if (raw) { const draft = JSON.parse(raw) as {customerName?:string;phone?:string;vehicleType?:string;vehicleRegistration?:string}; sessionStorage.removeItem("big-brothers-repeat-wash"); setRepeatPrefill(draft); setTab("book"); } } catch {}
+    try { const raw = sessionStorage.getItem("smart-wash-repeat-wash"); if (raw) { const draft = JSON.parse(raw) as {customerName?:string;phone?:string;vehicleType?:string;vehicleRegistration?:string}; sessionStorage.removeItem("smart-wash-repeat-wash"); setRepeatPrefill(draft); setTab("book"); } } catch {}
   }, []);
 
   useEffect(() => {
