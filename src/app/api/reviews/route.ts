@@ -22,7 +22,7 @@ export async function GET() {
       }));
     return NextResponse.json({ reviews }, { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } });
   } catch (error) {
-    console.error("Big Brothers public reviews unavailable:", error instanceof Error ? error.message : "unknown error");
+    console.error("Smart Wash public reviews unavailable:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ reviews: [] }, { headers: { "Cache-Control": "no-store" } });
   }
 }
