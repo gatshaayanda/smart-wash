@@ -34,7 +34,7 @@
 - Compactness applies to homepage, booking, customer account, receipts and admin—not only the landing page.
 - Apply the Operational Transparency Standard: show real activity and outcomes, never fake progress.
 - Smart Wash palette: blue/cyan and navy derived from the supplied signboard. Use the supplied location video as homepage hero media and signboard photograph as poster/fallback.
-- Do not invent an address, hours, phone number, price, discount, review or service claim. Publish only prices verified from the signboard or owner. Weather coordinates and operating capacity must be explicitly configured by the owner; never inherit the source business coordinates or capacity. The admin service catalogue must include active and hidden services so staff can restore them, edit names/descriptions/prices, and delete entries. The explicit signboard quick-add may publish only the nine clearly legible prices documented in docs/SMART-WASH-SERVICE-CATALOGUE.md.
+- Do not invent an address, hours, phone number, price, discount, review or service claim. Publish only prices verified from the signboard or owner. Weather coordinates and operating capacity must be explicitly configured by the owner; never inherit the source business coordinates or capacity. The admin service catalogue must include active and hidden services so staff can restore them, edit names/descriptions/prices, and delete entries. Seed the nine selected, clearly legible signboard prices documented in docs/SMART-WASH-SERVICE-CATALOGUE.md; all entries remain fully editable through CRUD. Do not add a separate homepage signboard/marketing section: the supplied signboard image is retained as authentic booking-video poster/fallback media only.
 
 ## Commands and QA
 ```bash
