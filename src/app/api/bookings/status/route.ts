@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       : message === "BOOKING_SLOT_PAST" ? "This requested time has already passed. Contact the customer and request a future time."
       : message === "BOOKING_HOURS_UNCONFIGURED" ? "Opening and closing hours are not configured. Set verified business hours before confirming bookings."
       : message === "BOOKING_HOURS_INVALID" ? "The configured closing time must be later than opening time."
-      : message === "BOOKING_DAY_CLOSED" ? "Big Brothers is marked closed on that day. Contact the customer to choose another date."
+      : message === "BOOKING_DAY_CLOSED" ? "Smart Wash is marked closed on that day. Contact the customer to choose another date."
       : message === "BOOKING_OUTSIDE_HOURS" ? "That request is outside the configured 30-minute booking slots and opening hours. Ask the customer to choose an available time."
       : message === "BOOKING_MODE_INVALID" ? "This booking has an invalid service mode and cannot be confirmed."
       : message === "BOOKING_NOT_FOUND" ? "That booking request could not be found."
