@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const weatherCacheKey = "smart-wash:last-weather:v1";
 
 type CurrentWeather = {
   temperature_2m: number;
@@ -27,19 +26,22 @@ function condition(code: number) {
   return "Cloudy conditions";
 }
 
-export default function LocationWeather({ showLocationGuide = true }: { showLocationGuide?: boolean }) {
+export default function LocationWeather({ showLocationGuide = true, latitude, longitude, locationLabel = "Smart Wash location" }: { showLocationGuide?: boolean; latitude?: number; longitude?: number; locationLabel?: string }) {
+  const locationConfigured = typeof latitude === "number" && Number.isFinite(latitude) && latitude >= -90 && latitude <= 90 && typeof longitude === "number" && Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
+  const weatherCacheKey = "smart-wash:last-weather:" + String(latitude ?? "unset") + ":" + String(longitude ?? "unset") + ":v1";
   const [weather, setWeather] = useState<CurrentWeather | null>(null);
-  const [weatherState, setWeatherState] = useState<"loading" | "ready" | "stale" | "error">("loading");
+  const [weatherState, setWeatherState] = useState<"loading" | "ready" | "stale" | "error" | "unconfigured">("unconfigured");
   const [saving, setSaving] = useState(false);
   const [mediaStatus, setMediaStatus] = useState("");
   const [offlineReady, setOfflineReady] = useState(false);
 
   const loadWeather = useCallback(async () => {
+    if (!locationConfigured) { setWeather(null); setWeatherState("unconfigured"); return; }
     setWeatherState(current => current === "ready" || current === "stale" ? current : "loading");
     try {
       const params = new URLSearchParams({
-        latitude: "-24.6282",
-        longitude: "25.9231",
+        latitude: String(latitude),
+        longitude: String(longitude),
         current: "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code",
         timezone: "auto",
       });
@@ -61,7 +63,7 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
       } catch { /* Ignore invalid or unavailable local weather cache. */ }
       setWeatherState(current => current === "ready" || current === "stale" ? "stale" : "error");
     }
-  }, []);
+  }, [latitude, longitude, locationConfigured, weatherCacheKey]);
 
   const checkOfflineMedia = useCallback(async () => {
     try {
@@ -128,7 +130,8 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
   const updated = weather?.time ? new Date(weather.time).toLocaleTimeString("en-BW", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Gaborone" }) : "";
   const localHour = Number(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: "Africa/Gaborone" }).format(new Date()));
   const greeting = localHour < 11 ? "Dumela!" : localHour < 17 ? "Eita!" : "Good evening!";
-  const weatherMood = !weather ? { emoji: "🤝", title: "Smart Wash has your back.", detail: "Live conditions are taking a break. You can still request a wash and the team will confirm availability." }
+  const weatherMood = !weather && !locationConfigured ? { emoji: "📍", title: "Wash location weather is not set yet.", detail: "The team can add the confirmed location coordinates in staff settings. You can still request a wash." }
+    : !weather ? { emoji: "🤝", title: "Smart Wash has your back.", detail: "Live conditions are taking a break. You can still request a wash and the team will confirm availability." }
     : weather.weather_code >= 51 && weather.weather_code <= 82 ? { emoji: "🌧️", title: "A wet one out there.", detail: "Take your time. You can request a wash and check the best timing with the team." }
     : weather.weather_code >= 95 ? { emoji: "⛈️", title: "Stormy skies over the area.", detail: "Put safety first. Check with the team before making the trip." }
     : weather.wind_speed_10m >= 25 ? { emoji: "💨", title: "Wind and dust on the move.", detail: "Been on dusty roads? Your ride deserves a little care." }
@@ -137,19 +140,19 @@ export default function LocationWeather({ showLocationGuide = true }: { showLoca
     : { emoji: "🌤️", title: "Whatever the weather, we've got your ride.", detail: "Make your next wash easy: join the queue or plan a return visit." };
 
   return <>
-    <section className="big-brothers-section location-weather-section" aria-label="Gaborone weather">
+    <section className="big-brothers-section location-weather-section" aria-label={locationLabel + " weather"}>
       <div className="bb-weather-card">
         <div className="bb-weather-main">
-          <p className="big-brothers-eyebrow">🚘 SMART WASH DAILY DRIVE · GABORONE</p>
+          <p className="big-brothers-eyebrow">🚘 SMART WASH DAILY DRIVE · {locationLabel.toUpperCase()}</p>
           <h3 className="bb-daily-greeting">{greeting}</h3>
           <p className="bb-daily-message"><span aria-hidden="true">{weatherMood.emoji}</span> <strong>{weatherMood.title}</strong> {weatherMood.detail}</p>
           <p className="bb-weather-condition-label">CURRENT CONDITIONS</p>
-          {weather ? <div className="bb-weather-reading"><strong>{Math.round(weather.temperature_2m)}°C</strong><span>{condition(weather.weather_code)}</span></div> : <p role="status" className="bb-weather-state">{weatherState === "loading" ? "Checking current conditions…" : "Live weather is unavailable right now. You can still browse services and request a wash; the team confirms availability."}</p>}
+          {weather ? <div className="bb-weather-reading"><strong>{Math.round(weather.temperature_2m)}°C</strong><span>{condition(weather.weather_code)}</span></div> : <p role="status" className="bb-weather-state">{weatherState === "loading" ? "Checking current conditions…" : weatherState === "unconfigured" ? "The wash location has not been configured for local weather yet." : "Live weather is unavailable right now. You can still browse services and request a wash; the team confirms availability."}</p>}
           {weather && <p className="bb-weather-feels">Feels like {Math.round(weather.apparent_temperature)}°C</p>}
           <small>{weatherState === "stale" ? "Last available reading " + updated + " local time · saved on this device · may be out of date · " : updated ? "Updated " + updated + " local time · " : ""}Weather by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a> (CC BY 4.0)</small>
         </div>
         {weather && <div className="bb-weather-metrics"><span><small>Humidity</small><strong>{weather.relative_humidity_2m}%</strong></span><span><small>Wind</small><strong>{Math.round(weather.wind_speed_10m)} km/h</strong></span></div>}
-        <div className="bb-weather-actions"><button type="button" className="bb-weather-refresh" onClick={() => void loadWeather()} disabled={weatherState === "loading"}>{weatherState === "loading" ? "Checking…" : "↻ Refresh"}</button><a href="#request">Join the queue ↗</a></div>
+        <div className="bb-weather-actions"><button type="button" className="bb-weather-refresh" onClick={() => void loadWeather()} disabled={weatherState === "loading" || !locationConfigured}>{weatherState === "loading" ? "Checking…" : "↻ Refresh"}</button><a href="#request">Join the queue ↗</a></div>
       </div>
     </section>
     {showLocationGuide && <section className="big-brothers-section bb-location-guide" id="find-us">
