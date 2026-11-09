@@ -19,6 +19,7 @@ type CustomerReceipt={receiptRef:string;receiptKind:string;priceNote:string;busi
 type Profile={name:string;email:string;phone:string;vehicleRegistrations:string[];createdAt:string};
 type CustomerInquiry={id:string;subject:string;message:string;status:string;createdAt:string;reply?:string;repliedAt?:string};
 export default function AccountPage(){
+ const { startUpload, isUploading } = useUploadThing("fileUploader");
  const [user,setUser]=useState<User|null>(null),[profile,setProfile]=useState<Profile>({name:"",email:"",phone:"",vehicleRegistrations:[],createdAt:""}),[bookings,setBookings]=useState<VulaBooking[]>([]),[queue,setQueue]=useState<VulaQueueEntry[]>([]),[receipts,setReceipts]=useState<CustomerReceipt[]>([]);
  const [name,setName]=useState(""),[email,setEmail]=useState(""),[phone,setPhone]=useState(""),[vehicles,setVehicles]=useState("");
  const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[message,setMessage]=useState(""),[error,setError]=useState(""),[authTimedOut,setAuthTimedOut]=useState(false),[authFailed,setAuthFailed]=useState(false);
