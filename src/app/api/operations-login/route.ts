@@ -24,8 +24,8 @@ function matchesWord(input: string, expected: string) {
 }
 export async function POST(request: Request) {
   try {
-    const expected = process.env.SMART_WASH_OPERATIONS_WORD;
-    if (!expected) return NextResponse.json({ error: "Staff sign-in is not configured. Set SMART_WASH_OPERATIONS_WORD in the server environment." }, { status: 503 });
+    const expected = process.env.ADMIN_PASSWORD;
+    if (!expected) return NextResponse.json({ error: "Staff sign-in is not configured. Set ADMIN_PASSWORD in the server environment." }, { status: 503 });
     const body = await request.json().catch(() => null) as { word?: unknown } | null;
     const word = typeof body?.word === "string" ? body.word : "";
     if (!matchesWord(word, expected)) return NextResponse.json({ error: "Access denied. Check the staff access word and try again." }, { status: 401 });
