@@ -1275,3 +1275,59 @@
 .admin-editor{max-width:820px;width:100%;padding:18px;border-radius:12px;border-color:#dce7ed}
 .admin-service-catalogue-intro{background:#f1f8fb}
 @media(max-width:760px){.bb-cinema-hero{min-height: min(760px,92svh)}.bb-cinema-copy{margin:48px auto 0;padding:42px 22px}.bb-cinema-kicker{margin-top:24px}.bb-cinema-intro{margin:18px 0 22px;line-height:1.6}.bb-cinema-primary-action{min-height:58px}.admin-vula .big-brothers-section{padding:22px 14px}.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-record{padding:13px}.admin-editor{padding:15px}}
+
+
+/* Smart Wash operations overview — compact, action-led and mobile-first. */
+.sw-ops-overview{display:grid;gap:14px;max-width:1440px}
+.sw-ops-overview-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:2px 0 4px}
+.sw-ops-overview-heading h2{margin:0 0 6px;font:600 clamp(23px,3vw,31px) "Space Grotesk",Arial,sans-serif;letter-spacing:-.05em;line-height:1.05}
+.sw-ops-overview-heading p:not(.big-brothers-eyebrow){margin:0;max-width:66ch;color:#5b6c78;font-size:12px;line-height:1.55}
+.sw-ops-live{display:inline-flex;align-items:center;gap:7px;flex:none;border:1px solid #cfe4ee;border-radius:99px;background:#f1f8fb;padding:7px 10px;color:#174968;font-size:10px;font-weight:800}
+.sw-ops-live .status-dot{width:6px;height:6px}
+.sw-ops-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.sw-ops-kpi{display:grid;gap:5px;min-width:0;padding:13px 14px;border:1px solid #dce7ed;border-radius:11px;background:#fff}
+.sw-ops-kpi>span{color:#526776;font-size:10px;font-weight:800;letter-spacing:.02em}
+.sw-ops-kpi strong{color:#0a1931;font:600 clamp(24px,3vw,31px) "Space Grotesk",Arial,sans-serif;letter-spacing:-.05em}
+.sw-ops-kpi small{color:#74828b;font-size:9px;line-height:1.4}
+.sw-ops-main-grid,.sw-ops-bottom-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:12px}
+.sw-ops-panel{min-width:0;padding:15px;border:1px solid #dce7ed;border-radius:12px;background:#fff}
+.sw-ops-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.sw-ops-panel-heading .big-brothers-eyebrow{margin:0 0 4px;font-size:9px}
+.sw-ops-panel-heading h3,.sw-ops-quick-tools h3{margin:0;color:#0a1931;font:600 18px "Space Grotesk",Arial,sans-serif;letter-spacing:-.035em}
+.sw-ops-count{flex:none;border-radius:99px;background:#eaf5fa;padding:6px 9px;color:#174968;font-size:10px;font-weight:800}
+.sw-ops-action-list{display:grid}
+.sw-ops-action{display:flex;align-items:center;gap:11px;width:100%;min-height:58px;padding:9px 2px;border:0;border-top:1px solid #edf1f3;background:#fff;text-align:left;cursor:pointer}
+.sw-ops-action:first-child{border-top:0}
+.sw-ops-action-number{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:9px;background:#eaf5fa;color:#174968;font-size:13px;font-weight:900}
+.sw-ops-action-copy{display:grid;gap:3px;min-width:0;flex:1}
+.sw-ops-action-copy strong{color:#152b3c;font-size:12px}
+.sw-ops-action-copy small{color:#71808a;font-size:10px;line-height:1.4}
+.sw-ops-arrow{color:#278fba;font-size:22px;font-weight:700}
+.sw-ops-action:hover .sw-ops-action-copy strong,.sw-ops-link:hover{color:#176fa0}
+.sw-ops-clear,.sw-ops-muted{margin:8px 0 2px;color:#71808a;font-size:11px;line-height:1.55}
+.sw-ops-pulse-list{display:grid}
+.sw-ops-pulse-list>div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #edf1f3}
+.sw-ops-pulse-list>div:first-child{border-top:0}
+.sw-ops-pulse-list span{color:#526776;font-size:11px}
+.sw-ops-pulse-list strong{color:#0a1931;font-size:12px;font-variant-numeric:tabular-nums}
+.sw-ops-footnote{margin:10px 0 8px;padding:9px 10px;border-radius:8px;background:#f6f9fa;color:#71808a;font-size:9px;line-height:1.5}
+.sw-ops-link,.sw-ops-text-button{border:0;background:transparent;color:#176f9d;font-size:10px;font-weight:850;cursor:pointer;padding:6px 0}
+.sw-ops-customer-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}
+.sw-ops-customer-stats>div{display:grid;gap:4px;padding:10px 8px;border:1px solid #e5edf1;border-radius:9px;background:#f8fbfc}
+.sw-ops-customer-stats strong{color:#0a1931;font:600 21px "Space Grotesk",Arial,sans-serif}
+.sw-ops-customer-stats span{color:#71808a;font-size:9px;line-height:1.35}
+.sw-ops-recent-list{display:grid}
+.sw-ops-recent-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid #edf1f3}
+.sw-ops-recent-row:first-child{border-top:0}
+.sw-ops-recent-row>div{display:grid;gap:3px;min-width:0}
+.sw-ops-recent-row span{color:#176f9d;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.sw-ops-recent-row strong{color:#152b3c;font-size:11px}
+.sw-ops-recent-row small{color:#71808a;font-size:9px;line-height:1.4;overflow-wrap:anywhere}
+.sw-ops-recent-row button{min-height:34px;flex:none;border:1px solid #d7e5eb;border-radius:8px;background:#fff;padding:6px 10px;color:#174968;font-size:10px;font-weight:800}
+.sw-ops-quick-tools{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 15px;border:1px solid #dce7ed;border-radius:12px;background:#f5fafc}
+.sw-ops-quick-tools .big-brothers-eyebrow{margin:0 0 4px;font-size:9px}
+.sw-ops-tool-links{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px}
+.sw-ops-tool-links button{min-height:35px;border:1px solid #d2e1e8;border-radius:8px;background:#fff;padding:7px 10px;color:#234052;font-size:10px;font-weight:750}
+.sw-ops-tool-links button:hover{border-color:#278fba;background:#eaf5fa}
+@media(max-width:900px){.sw-ops-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-ops-main-grid,.sw-ops-bottom-grid{grid-template-columns:1fr}.sw-ops-quick-tools{align-items:flex-start;flex-direction:column}.sw-ops-tool-links{justify-content:flex-start}}
+@media(max-width:560px){.sw-ops-overview{gap:10px}.sw-ops-overview-heading{align-items:flex-start;flex-direction:column;gap:8px}.sw-ops-kpi{padding:11px}.sw-ops-kpi strong{font-size:25px}.sw-ops-panel{padding:12px}.sw-ops-customer-stats{gap:5px}.sw-ops-customer-stats>div{padding:8px 6px}.sw-ops-quick-tools{padding:12px}.sw-ops-tool-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.sw-ops-tool-links button{min-height:42px;text-align:left}}

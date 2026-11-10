@@ -11,7 +11,7 @@
 - Next.js 15 App Router, React 19, TypeScript, Firebase client/Admin SDK.
 - Public booking and walk-in intake: `src/app/page.tsx`.
 - Customer account and receipts: `src/app/account`, `src/app/receipt`.
-- Staff/admin operations: `src/app/admin`.
+- Staff/admin operations: `src/app/admin`. The default staff view is the action-led `operations-overview.tsx`; detailed booking, walk-in queue, fleet, service catalogue, settings, gallery, review moderation, loyalty, racing, inbox and customer follow-up workspaces remain in `big-brothers-dashboard.tsx`.
 - Booking, queue, receipt, notification and upload handlers: `src/app/api`.
 - Firestore helpers: `src/lib/firebase/big-brothers-data.ts`. Legacy module names are retained temporarily to protect stable imports; they must connect only to Smart Wash infrastructure.
 - Preserve inherited booking, walk-in, account, receipt, admin CRUD, authentication, upload, notification and chatbot/help workflows.
@@ -26,7 +26,7 @@
 ## Protected behavior
 - Preserve PWA installation lifecycle, branded dismissible card, native prompt on explicit user click, embedded-browser handling, iOS guidance, service-worker update flow and offline draft semantics. Rebrand/cache-namespace changes only.
 - Preserve the inherited chatbot/help behavior and its real actions; adapt identity/content only.
-- Preserve customer ownership checks and staff authorization. Distinguish local drafts from server-confirmed records. Never claim a booking, upload, payment, message, notification or receipt succeeded without backend confirmation.
+- Preserve customer ownership checks and staff authorization. One-word staff access uses `ADMIN_PASSWORD` server-side and the existing Firebase anonymous session; the server writes a 24-hour `admins/{uid}` authorization record. No custom tokens, staff email/password accounts or speculative provisioning. Firestore `isAdmin()` checks the role and numeric `sessionExpiresAt`; keep that expiry check in place. Distinguish local drafts from server-confirmed records. Never claim a booking, upload, payment, message, notification or receipt succeeded without backend confirmation.
 - Keep existing booking, queue, account, receipts, uploads and admin operations working.
 
 ## Visual and content standard
