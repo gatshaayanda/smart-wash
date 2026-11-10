@@ -42,6 +42,7 @@ export async function POST(request: Request) {
   }
 
   let stage = "FIREBASE_ADMIN_INIT";
+  let operation = "initialize Firebase Admin";
   try {
     const app = getAdminApp();
     const adminAuth = getAuth(app);
@@ -52,17 +53,21 @@ export async function POST(request: Request) {
     stage = "FIREBASE_USER_PROVISION";
     let user;
     try {
+      operation = "look up the staff account";
       user = await adminAuth.getUserByEmail(email);
+      operation = "update the staff account password";
       user = await adminAuth.updateUser(user.uid, { password: word, disabled: false, emailVerified: true });
     } catch (error) {
       const code = typeof error === "object" && error !== null && "code" in error
         ? String((error as { code?: unknown }).code ?? "")
         : "";
       if (code !== "auth/user-not-found") throw error;
+      operation = "create the staff account";
       user = await adminAuth.createUser({ email, password: word, emailVerified: true, disabled: false });
     }
 
     stage = "FIRESTORE_ADMIN_PROVISION";
+    operation = "write the staff authorization record to Firestore";
     const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
     await getFirestore(app).doc("admins/" + user.uid).set({
       role: "owner",
@@ -78,11 +83,11 @@ export async function POST(request: Request) {
       : "";
     console.error("Smart Wash staff login failed:", { stage, code, message: detail });
     const guidance = stage === "FIREBASE_ADMIN_INIT"
-      ? "Check that FIREBASE_PROJECT_ID and FIREBASE_ADMIN_KEY are valid matching credentials."
+      ? "Check that FIREBASE_ADMIN_KEY contains the correct service-account JSON."
       : stage === "FIREBASE_USER_PROVISION"
         ? "Firebase could not provision the standard staff account. Check Firebase Authentication and service-account permissions."
         : "Firebase Authentication is ready, but the staff session record could not be saved to Firestore.";
-    return NextResponse.json({ error: "Staff sign-in failed at " + stage + ". " + guidance, stage }, {
+    return NextResponse.json({ error: "Staff sign-in failed at " + stage + " while attempting to " + operation + ". " + guidance, stage, operation, firebaseCode: code || "unknown" }, {
       status: 503,
       headers: { "Cache-Control": "no-store" },
     });
