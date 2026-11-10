@@ -11,10 +11,9 @@ export function bigBrothersAdminApp() {
   let serviceAccount: Record<string, unknown>;
   try { serviceAccount = JSON.parse(raw) as Record<string, unknown>; }
   catch { throw new Error("FIREBASE_ADMIN_KEY must contain valid service-account JSON."); }
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  if (!projectId) throw new Error("FIREBASE_PROJECT_ID must point to the dedicated Smart Wash Firebase project.");
-  if (serviceAccount.project_id && serviceAccount.project_id !== projectId) throw new Error("FIREBASE_ADMIN_KEY belongs to a different Firebase project.");
-  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]), projectId }, "smart-wash-operations");
+  if (typeof serviceAccount.private_key === "string") serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+  if (typeof serviceAccount.project_id !== "string" || !serviceAccount.project_id) throw new Error("FIREBASE_ADMIN_KEY must include its service-account project_id.");
+  return initializeApp({ credential: cert(serviceAccount as Parameters<typeof cert>[0]) }, "smart-wash-operations");
 }
 
 export async function requireBigBrothersStaff(request: Request) {
