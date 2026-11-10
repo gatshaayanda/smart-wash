@@ -33,11 +33,17 @@ export async function POST(request: Request) {
     const adminAuth = getAuth(app);
     await getFirestore(app).collection("admins").doc(uid).set({ role: "owner", updatedAt: new Date().toISOString() }, { merge: true });
     const bbStaffSessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
-    await adminAuth.setCustomUserClaims(uid, { bbStaffSessionExpiresAt });
+    // Custom-token claims are embedded in the ID token at sign-in. Do not call
+    // setCustomUserClaims here: that API requires a pre-existing Auth user,
+    // while this owner UID is provisioned by its first custom-token sign-in.
     const token = await adminAuth.createCustomToken(uid, { bbStaffSessionExpiresAt });
     return NextResponse.json({ token }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Smart Wash staff login failed:", error instanceof Error ? error.message : "unknown error");
+    const detail = error instanceof Error ? error.message : "unknown error";
+    const code = typeof error === "object" && error !== null && "code" in error
+      ? String((error as { code?: unknown }).code ?? "")
+      : "";
+    console.error("Smart Wash staff login failed:", { code, message: detail });
     return NextResponse.json({ error: "Staff sign-in is temporarily unavailable. Check server configuration." }, { status: 500 });
   }
 }
