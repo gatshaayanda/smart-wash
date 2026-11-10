@@ -34,62 +34,32 @@ function matchesWord(input: string, expected: string) {
 
 export async function POST(request: Request) {
   const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return NextResponse.json({ error: "Staff sign-in is not configured. Set ADMIN_PASSWORD in the server environment." }, { status: 503 });
+  if (!expected) return NextResponse.json({ error: "Staff access is not configured. Set ADMIN_PASSWORD on the server." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+
   const body = await request.json().catch(() => null) as { word?: unknown } | null;
   const word = typeof body?.word === "string" ? body.word : "";
-  if (!matchesWord(word, expected)) {
-    return NextResponse.json({ error: "Access denied. Check the staff access word and try again." }, { status: 401 });
-  }
+  if (!matchesWord(word, expected)) return NextResponse.json({ error: "Access denied. Check the staff access word and try again." }, { status: 401, headers: { "Cache-Control": "no-store" } });
 
-  let stage = "FIREBASE_ADMIN_INIT";
-  let operation = "initialize Firebase Admin";
+  const match = (request.headers.get("authorization") || "").match(/^Bearer\\s+(.+)$/i);
+  if (!match) return NextResponse.json({ error: "Sign-in session missing. Reconnect and try again." }, { status: 401, headers: { "Cache-Control": "no-store" } });
+
   try {
     const app = getAdminApp();
-    const adminAuth = getAuth(app);
-    const projectId = String((JSON.parse(process.env.FIREBASE_ADMIN_KEY!) as Record<string, unknown>).project_id);
-    // Stable internal identity; the user signs in through Firebase's standard
-    // Email/Password provider. No custom tokens or custom claims are minted.
-    const email = "smart-wash-operations@" + projectId + ".firebaseapp.com";
-    stage = "FIREBASE_USER_PROVISION";
-    let user;
-    try {
-      operation = "look up the staff account";
-      user = await adminAuth.getUserByEmail(email);
-      operation = "update the staff account password";
-      user = await adminAuth.updateUser(user.uid, { password: word, disabled: false, emailVerified: true });
-    } catch (error) {
-      const code = typeof error === "object" && error !== null && "code" in error
-        ? String((error as { code?: unknown }).code ?? "")
-        : "";
-      if (code !== "auth/user-not-found") throw error;
-      operation = "create the staff account";
-      user = await adminAuth.createUser({ email, password: word, emailVerified: true, disabled: false });
+    const decoded = await getAuth(app).verifyIdToken(match[1]);
+    if (!decoded.firebase?.sign_in_provider || !["anonymous", "password", "google.com"].includes(decoded.firebase.sign_in_provider)) {
+      return NextResponse.json({ error: "This session cannot be used for staff access." }, { status: 403, headers: { "Cache-Control": "no-store" } });
     }
-
-    stage = "FIRESTORE_ADMIN_PROVISION";
-    operation = "write the staff authorization record to Firestore";
     const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
-    await getFirestore(app).doc("admins/" + user.uid).set({
+    await getFirestore(app).doc("admins/" + decoded.uid).set({
       role: "owner",
       sessionExpiresAt,
+      accessMethod: "one-word",
       updatedAt: new Date().toISOString(),
     }, { merge: true });
-
-    return NextResponse.json({ email }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ ok: true, sessionExpiresAt }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "unknown error";
-    const code = typeof error === "object" && error !== null && "code" in error
-      ? String((error as { code?: unknown }).code ?? "")
-      : "";
-    console.error("Smart Wash staff login failed:", { stage, code, message: detail });
-    const guidance = stage === "FIREBASE_ADMIN_INIT"
-      ? "Check that FIREBASE_ADMIN_KEY contains the correct service-account JSON."
-      : stage === "FIREBASE_USER_PROVISION"
-        ? "Firebase could not provision the standard staff account. Check Firebase Authentication and service-account permissions."
-        : "Firebase Authentication is ready, but the staff session record could not be saved to Firestore.";
-    return NextResponse.json({ error: "Staff sign-in failed at " + stage + " while attempting to " + operation + ". " + guidance, stage, operation, firebaseCode: code || "unknown" }, {
-      status: 503,
-      headers: { "Cache-Control": "no-store" },
-    });
+    const code = typeof error === "object" && error !== null && "code" in error ? String((error as { code?: unknown }).code ?? "") : "";
+    console.error("Smart Wash one-word staff sign-in failed:", { code, message: error instanceof Error ? error.message : "unknown error" });
+    return NextResponse.json({ error: "Staff access could not be activated. Check the server Firebase Admin connection and Firestore access." }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }
