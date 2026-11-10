@@ -49,9 +49,11 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         setAuthorized(allowed);
         setChecking(false);
         if (!allowed) {
-          setError(snapshot.exists()
-            ? "Your staff session has expired. Enter the staff access word to continue."
-            : "This account is not enabled for Smart Wash staff operations.");
+          if (!snapshot.exists()) {
+            setError("");
+            return;
+          }
+          setError("Your staff session has expired. Enter the staff access word to continue.");
           void signOut(auth);
           return;
         }
