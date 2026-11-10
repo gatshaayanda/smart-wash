@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   const word = typeof body?.word === "string" ? body.word : "";
   if (!matchesWord(word, expected)) return NextResponse.json({ error: "Access denied. Check the staff access word and try again." }, { status: 401, headers: { "Cache-Control": "no-store" } });
 
-  const match = (request.headers.get("authorization") || "").match(/^Bearer\\s+(.+)$/i);
+  const match = (request.headers.get("authorization") || "").match(/^Bearer\s+(.+)$/i);
   if (!match) return NextResponse.json({ error: "Sign-in session missing. Reconnect and try again." }, { status: 401, headers: { "Cache-Control": "no-store" } });
 
   try {
