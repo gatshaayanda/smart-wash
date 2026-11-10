@@ -58,7 +58,7 @@ export default function OperationsOverview({ bookings, queue, fleet, services, i
         <span className="sw-ops-date">{new Intl.DateTimeFormat("en-BW", { timeZone: "Africa/Gaborone", weekday: "short", day: "numeric", month: "short" }).format(new Date())}</span>
       </div>
       <div className="sw-ops-kpis">
-        <button type="button" className="sw-ops-kpi" onClick={() => onOpenTab("bookings")}><span>Today's bookings</span><strong>{todayBookings.length}</strong><small>{awaiting.length} awaiting confirmation</small></button>
+        <button type="button" className="sw-ops-kpi" onClick={() => onOpenTab("bookings")}><span>Today&apos;s bookings</span><strong>{todayBookings.length}</strong><small>{awaiting.length} awaiting confirmation</small></button>
         <button type="button" className="sw-ops-kpi" onClick={() => onOpenTab("queue")}><span>Wash floor</span><strong>{waiting.length + inService.length}</strong><small>{waiting.length} waiting · {inService.length} in service</small></button>
         <button type="button" className="sw-ops-kpi" onClick={() => onOpenTab("fleet")}><span>Fleet enquiries</span><strong>{newFleet.length}</strong><small>New business requests</small></button>
         <button type="button" className="sw-ops-kpi" onClick={() => onOpenTab("inbox")}><span>Customer messages</span><strong>{inboxLoading ? "…" : pendingReplies.length}</strong><small>Awaiting a reply</small></button>
