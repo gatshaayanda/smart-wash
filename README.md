@@ -26,7 +26,7 @@ Smart Wash uses the owner-designated Firebase project `exquisite-waterproof-serv
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - Optional: `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`, `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
 - Server-only: `FIREBASE_PROJECT_ID`, `FIREBASE_ADMIN_KEY`
-- Existing handler secret names retained for compatibility: `SMART_WASH_OPERATIONS_WORD`, `SMART_WASH_REMINDER_CRON_SECRET`. Use new Smart Wash secrets only.
+- Staff one-word login: `ADMIN_PASSWORD` (server-only). Reminder automation: `SMART_WASH_REMINDER_CRON_SECRET`. The staff login does not read `SMART_WASH_OPERATIONS_WORD`.
 
 The service account JSON must belong to the same project as `FIREBASE_PROJECT_ID`. The `.firebaserc` default target is already set to `exquisite-waterproof-services`. Never reuse source credentials or customer records. The first server-confirmed Admin → Services catalogue load automatically adds the nine clearly legible signboard prices if they are missing; a manual import action remains available. Each service can then be edited, repriced, hidden/unhidden or deleted. Four incomplete signboard prices remain excluded until confirmed. Admin weather coordinates and booking capacity are intentionally unset until the owner configures the Smart Wash location and actual staffing.
 
