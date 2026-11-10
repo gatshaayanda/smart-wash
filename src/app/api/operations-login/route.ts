@@ -14,19 +14,15 @@ function getAdminApp() {
   let serviceAccount: Record<string, unknown>;
   try { serviceAccount = JSON.parse(raw) as Record<string, unknown>; }
   catch { throw new Error("FIREBASE_ADMIN_KEY must contain valid service-account JSON."); }
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  if (!projectId) throw new Error("Missing FIREBASE_PROJECT_ID environment variable.");
-  if (serviceAccount.project_id !== projectId) throw new Error("FIREBASE_ADMIN_KEY project_id must match FIREBASE_PROJECT_ID.");
-  if (typeof serviceAccount.client_email !== "string" || typeof serviceAccount.private_key !== "string") {
-    throw new Error("FIREBASE_ADMIN_KEY must include client_email and private_key.");
+  if (typeof serviceAccount.private_key === "string") {
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
   }
-  const normalizedAccount = {
-    ...serviceAccount,
-    private_key: serviceAccount.private_key.replace(/\\n/g, "\n"),
-  };
+  if (typeof serviceAccount.project_id !== "string" || !serviceAccount.project_id) {
+    throw new Error("FIREBASE_ADMIN_KEY must include its service-account project_id.");
+  }
+  // Match the proven JTS setup: infer the Firebase project from the service account.
   return initializeApp({
-    credential: cert(normalizedAccount as Parameters<typeof cert>[0]),
-    projectId,
+    credential: cert(serviceAccount as Parameters<typeof cert>[0]),
   }, "smart-wash-operations");
 }
 
@@ -49,7 +45,7 @@ export async function POST(request: Request) {
   try {
     const app = getAdminApp();
     const adminAuth = getAuth(app);
-    const projectId = process.env.FIREBASE_PROJECT_ID!;
+    const projectId = String((JSON.parse(process.env.FIREBASE_ADMIN_KEY!) as Record<string, unknown>).project_id);
     // Stable internal identity; the user signs in through Firebase's standard
     // Email/Password provider. No custom tokens or custom claims are minted.
     const email = "smart-wash-operations@" + projectId + ".firebaseapp.com";
