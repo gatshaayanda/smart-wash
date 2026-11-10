@@ -39,7 +39,7 @@ service cloud.firestore {
 
     function validBooking(uid) {
       return request.resource.data.keys().hasOnly([
-          'customerId', 'customerName', 'phone', 'vehicleType',
+          'customerId', 'customerName', 'broughtByName', 'phone', 'vehicleType',
           'vehicleRegistration', 'serviceId', 'serviceName',
           'serviceMode', 'locationId', 'address', 'scheduledFor',
           'notes', 'priceQuote', 'paymentMethod', 'paymentStatus', 'tipAmount',
@@ -52,6 +52,8 @@ service cloud.firestore {
         ])
         && request.resource.data.customerId == uid
         && validText(request.resource.data.customerName, 120)
+        && (!request.resource.data.keys().hasAny(['broughtByName'])
+            || validText(request.resource.data.broughtByName, 120))
         && validText(request.resource.data.phone, 40)
         && validText(request.resource.data.vehicleType, 80)
         && validText(request.resource.data.vehicleRegistration, 30)
