@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
+import { onAuthStateChanged, signInAnonymously, signOut, type User } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase/client";
@@ -81,15 +81,15 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     setBusy(true);
     setError("");
     try {
+      const currentUser = auth.currentUser ?? (await signInAnonymously(auth)).user;
       const response = await fetch("/api/operations-login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + await currentUser.getIdToken() },
         body: JSON.stringify({ word }),
         cache: "no-store",
       });
-      const payload = await response.json() as { email?: string; error?: string };
-      if (!response.ok || !payload.email) throw new Error(payload.error || "Staff sign-in failed.");
-      await signInWithEmailAndPassword(auth, payload.email, word);
+      const payload = await response.json() as { ok?: boolean; error?: string };
+      if (!response.ok || !payload.ok) throw new Error(payload.error || "Staff sign-in failed.");
       setWord("");
       setError("");
     } catch (cause) {
@@ -97,10 +97,8 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         ? String((cause as { code?: unknown }).code ?? "")
         : "";
       const message = code === "auth/operation-not-allowed"
-        ? "Enable Email/Password sign-in in Firebase Authentication before using staff access."
-        : code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found"
-          ? "Staff authentication could not be completed. Check the staff access word and try again."
-          : cause instanceof Error ? cause.message : "Staff sign-in failed.";
+        ? "Enable Anonymous sign-in in Firebase Authentication to use the one-word staff access."
+        : cause instanceof Error ? cause.message : "Staff sign-in failed.";
       setError(message);
       await signOut(auth).catch(() => undefined);
     } finally {
