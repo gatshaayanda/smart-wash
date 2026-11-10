@@ -54,7 +54,7 @@ export default function OperationsOverview({ bookings, queue, fleet, services, i
   return (
     <section className="sw-ops-overview" aria-label="Smart Wash operations overview">
       <div className="sw-ops-heading">
-        <div><p className="big-brothers-eyebrow">TODAY · GABORONE TIME</p><h2>Today's operation</h2></div>
+        <div><p className="big-brothers-eyebrow">TODAY · GABORONE TIME</p><h2>Today&apos;s operation</h2></div>
         <span className="sw-ops-date">{new Intl.DateTimeFormat("en-BW", { timeZone: "Africa/Gaborone", weekday: "short", day: "numeric", month: "short" }).format(new Date())}</span>
       </div>
       <div className="sw-ops-kpis">
@@ -70,7 +70,7 @@ export default function OperationsOverview({ bookings, queue, fleet, services, i
             <button type="button" className="sw-ops-action" onClick={() => onOpenTab("bookings")}><span className="sw-ops-action-number">{awaiting.length}</span><span className="sw-ops-action-copy"><strong>Confirm booking requests</strong><small>Check time, service and capacity</small></span><span className="sw-ops-arrow">›</span></button>
             <button type="button" className="sw-ops-action" onClick={() => onOpenTab("queue")}><span className="sw-ops-action-number">{waiting.length + inService.length}</span><span className="sw-ops-action-copy"><strong>Move the wash queue</strong><small>{waiting.length} waiting · {inService.length} being washed</small></span><span className="sw-ops-arrow">›</span></button>
             <button type="button" className="sw-ops-action" onClick={() => onOpenTab("fleet")}><span className="sw-ops-action-number">{newFleet.length}</span><span className="sw-ops-action-copy"><strong>Reply to fleet leads</strong><small>Vehicle count, needs and schedule</small></span><span className="sw-ops-arrow">›</span></button>
-            <button type="button" className="sw-ops-action" onClick={() => onOpenTab("inbox")}><span className="sw-ops-action-number">{inboxLoading ? "…" : pendingReplies.length}</span><span className="sw-ops-action-copy"><strong>Answer customer messages</strong><small>Save replies to the customer's account</small></span><span className="sw-ops-arrow">›</span></button>
+            <button type="button" className="sw-ops-action" onClick={() => onOpenTab("inbox")}><span className="sw-ops-action-number">{inboxLoading ? "…" : pendingReplies.length}</span><span className="sw-ops-action-copy"><strong>Answer customer messages</strong><small>Save replies to the customer&apos;s account</small></span><span className="sw-ops-arrow">›</span></button>
             {needsAttention === 0 && !inboxLoading && <p className="sw-ops-clear">No outstanding actions in the records currently loaded.</p>}
           </div>
         </section>
