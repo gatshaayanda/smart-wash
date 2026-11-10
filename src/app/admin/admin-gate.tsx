@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import { getIdTokenResult, onAuthStateChanged, signInWithCustomToken, signOut, type User } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase/client";
@@ -34,50 +34,38 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       stopAdmin = undefined;
       if (expiryTimer) clearTimeout(expiryTimer);
       setUser(next);
-      setChecking(true);
+      setChecking(Boolean(next));
       setAuthorized(false);
       if (!next) {
         setChecking(false);
         return;
       }
-      void (async () => {
-        try {
-          const token = await getIdTokenResult(next);
-          if (generation !== authGeneration) return;
-          const expiresAt = Number(token.claims.bbStaffSessionExpiresAt);
-          if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
-            setError("Your staff session has expired. Enter the staff access word to continue.");
-            await signOut(auth);
-            return;
-          }
-          expiryTimer = setTimeout(() => {
-            setAuthorized(false);
-            setError("Your 24-hour staff session has ended. Sign in again to continue.");
-            void signOut(auth);
-          }, Math.min(expiresAt - Date.now(), 2_147_000_000));
-          stopAdmin = onSnapshot(doc(db, "admins", next.uid), snapshot => {
-            if (generation !== authGeneration) return;
-            const allowed = snapshot.exists() && hasAdminRole(snapshot.data());
-            setAuthorized(allowed);
-            setChecking(false);
-            if (!allowed) {
-              setError("This account is not enabled for Smart Wash staff operations.");
-              void signOut(auth);
-            }
-          }, () => {
-            if (generation !== authGeneration) return;
-            setAuthorized(false);
-            setChecking(false);
-            setError("Staff access could not be verified. Reconnect and sign in again.");
-          });
-        } catch {
-          if (generation !== authGeneration) return;
-          setAuthorized(false);
-          setChecking(false);
-          setError("Staff session could not be verified. Sign in again.");
-          await signOut(auth);
+
+      stopAdmin = onSnapshot(doc(db, "admins", next.uid), snapshot => {
+        if (generation !== authGeneration) return;
+        const data = snapshot.data();
+        const expiresAt = Number(data?.sessionExpiresAt);
+        const allowed = snapshot.exists() && hasAdminRole(data) && Number.isFinite(expiresAt) && expiresAt > Date.now();
+        setAuthorized(allowed);
+        setChecking(false);
+        if (!allowed) {
+          setError(snapshot.exists()
+            ? "Your staff session has expired. Enter the staff access word to continue."
+            : "This account is not enabled for Smart Wash staff operations.");
+          void signOut(auth);
+          return;
         }
-      })();
+        expiryTimer = setTimeout(() => {
+          setAuthorized(false);
+          setError("Your 24-hour staff session has ended. Sign in again to continue.");
+          void signOut(auth);
+        }, Math.min(expiresAt - Date.now(), 2_147_000_000));
+      }, () => {
+        if (generation !== authGeneration) return;
+        setAuthorized(false);
+        setChecking(false);
+        setError("Staff access could not be verified. Reconnect and sign in again.");
+      });
     });
     return () => {
       authGeneration++;
@@ -99,16 +87,21 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ word }),
         cache: "no-store",
       });
-      const payload = await response.json() as { token?: string; error?: string };
-      if (!response.ok || !payload.token) throw new Error(payload.error || "Staff sign-in failed.");
-      const credential = await signInWithCustomToken(auth, payload.token);
-      const token = await getIdTokenResult(credential.user, true);
-      const expiresAt = Number(token.claims.bbStaffSessionExpiresAt);
-      if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) throw new Error("The staff session could not be established. Please try again.");
+      const payload = await response.json() as { email?: string; error?: string };
+      if (!response.ok || !payload.email) throw new Error(payload.error || "Staff sign-in failed.");
+      await signInWithEmailAndPassword(auth, payload.email, word);
       setWord("");
       setError("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Staff sign-in failed.");
+      const code = typeof cause === "object" && cause !== null && "code" in cause
+        ? String((cause as { code?: unknown }).code ?? "")
+        : "";
+      const message = code === "auth/operation-not-allowed"
+        ? "Enable Email/Password sign-in in Firebase Authentication before using staff access."
+        : code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found"
+          ? "Staff authentication could not be completed. Check the staff access word and try again."
+          : cause instanceof Error ? cause.message : "Staff sign-in failed.";
+      setError(message);
       await signOut(auth).catch(() => undefined);
     } finally {
       setBusy(false);
@@ -116,7 +109,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   }
 
   if (checking) return <main className="vula"><section className="big-brothers-section"><p className="big-brothers-eyebrow">STAFF ACCESS</p><h1 style={{fontSize:"clamp(36px,6vw,58px)"}}>Checking access…</h1></section></main>;
-  if (user && authorized) return <div className="adminAuthorized"><div className="big-brothers-status"><span className="status-dot online"/>Staff signed in · 24-hour session · {user.email || "authorized staff"}<button style={{marginLeft:12}} onClick={() => void signOut(auth)}>Sign out</button></div>{children}</div>;
+  if (user && authorized) return <div className="adminAuthorized"><div className="big-brothers-status"><span className="status-dot online"/>Staff signed in · 24-hour session<button style={{marginLeft:12}} onClick={() => void signOut(auth)}>Sign out</button></div>{children}</div>;
 
   return <main className="vula"><div className="big-brothers-status"><span className="status-dot online"/>{businessName} · Staff access</div><section className="big-brothers-section" style={{maxWidth:620,margin:"40px auto"}}><p className="big-brothers-eyebrow">STAFF ONLY</p><h1 style={{fontSize:"clamp(38px,6vw,62px)"}}>Operations sign in.</h1><p>Use the private staff access word. Do not share it with customers.</p><form className="admin-editor" onSubmit={signIn}><label>Staff access word<input type="password" value={word} onChange={event=>setWord(event.target.value)} required autoComplete="current-password"/></label><button className="big-brothers-button primary" disabled={busy}>{busy ? "Checking…" : "Enter staff workspace"}</button>{error&&<p role="alert" className="big-brothers-notice error">{error}</p>}</form></section></main>;
 }
