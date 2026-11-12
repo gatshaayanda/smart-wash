@@ -248,7 +248,6 @@ export default function Home() {
     const formElement = event.currentTarget; const form = new FormData(formElement);
     const customerName = String(form.get("customerName") ?? "").trim();
     const phone = String(form.get("phone") ?? "").trim();
-    const broughtByName = String(form.get("broughtByName") ?? "").trim();
     const enteredBy = String(form.get("enteredBy") ?? "customer") === "staff" ? "staff" : "customer";
     const vehicleType = String(form.get("vehicleType") ?? "").trim();
     const vehicleDescription = String(form.get("vehicleType") ?? "").trim();
@@ -271,7 +270,7 @@ export default function Home() {
     let pendingQueueId = "";
     let pendingQueueData: Record<string, unknown> | null = null;
     try {
-      const common: Record<string, unknown> = { customerName, phone, ...(broughtByName ? { broughtByName } : {}), vehicleType: vehicleDescription || "Not described", vehicleRegistration: "", notes, createdAt: now, updatedAt: now };
+      const common: Record<string, unknown> = { customerName, phone, vehicleType: vehicleDescription || "Not described", vehicleRegistration: "", notes, createdAt: now, updatedAt: now };
       let collectionName: string; let data: Record<string, unknown>;
       if (tab === "book") {
         const address = String(form.get("address") ?? "").trim(); const scheduledInput = String(form.get("scheduledFor") ?? "");
