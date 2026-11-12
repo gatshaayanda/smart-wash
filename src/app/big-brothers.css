@@ -1454,3 +1454,18 @@
  .sw-admin-statstrip span{font-size:7px}
  .sw-ops-tool-links{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Simple future booking — compact, low-friction and consistent with walk-in intake. */
+.sw-booking-simple{display:grid;gap:12px;max-width:680px;margin:0 auto;padding:14px;border:1px solid #dce7ed;border-radius:12px;background:#fff}
+.sw-booking-simple-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:9px;border-bottom:1px solid #edf1f3}
+.sw-booking-simple-heading strong{color:#10283d;font-size:14px}
+.sw-booking-simple-heading span,.sw-booking-availability{color:#637887;font-size:10px;line-height:1.45}
+.sw-booking-simple label{display:grid;gap:5px;color:#234052;font-size:10px;font-weight:800}
+.sw-booking-simple input,.sw-booking-simple select,.sw-booking-simple textarea{width:100%;min-height:42px;padding:9px 11px;border:1px solid #cfdde5;border-radius:8px;background:#fff;color:#10283d;font:inherit;font-size:12px}
+.sw-booking-simple textarea{min-height:68px;resize:vertical}
+.sw-booking-simple label small{color:#71808a;font-size:9px;font-weight:500}
+.sw-booking-date-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sw-booking-availability{margin:-5px 0 0;padding:8px 9px;border-radius:7px;background:#f2f7fa}
+.sw-booking-simple .mode-switch{margin:0}
+@media(max-width:560px){.sw-booking-simple{gap:10px;padding:11px;border-radius:10px}.sw-booking-simple-heading{align-items:flex-start;flex-direction:column;gap:3px}.sw-booking-date-grid{grid-template-columns:1fr 1fr;gap:7px}.sw-booking-simple input,.sw-booking-simple select{min-height:40px;padding:8px;font-size:11px}}
