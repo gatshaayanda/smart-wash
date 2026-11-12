@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, Timestamp } from "firebase-admin/firestore";
 
 export function bigBrothersAdminApp() {
   const existing = getApps().find(app => app.name === "smart-wash-operations");
@@ -22,7 +22,8 @@ export async function requireBigBrothersStaff(request: Request) {
   const app = bigBrothersAdminApp();
   const decoded = await getAuth(app).verifyIdToken(token, true);
   const admin = await getFirestore(app).doc(`admins/${decoded.uid}`).get();
-  const sessionExpiry = Number(admin.data()?.sessionExpiresAt);
+  const expiryValue = admin.data()?.sessionExpiresAt;
+  const sessionExpiry = expiryValue instanceof Timestamp ? expiryValue.toMillis() : Number(expiryValue);
   if (!admin.exists || !["owner", "staff"].includes(String(admin.data()?.role))) throw new Error("Staff access is required.");
   if (!Number.isFinite(sessionExpiry) || sessionExpiry <= Date.now()) throw new Error("Staff sign-in is required because the staff session expired. Sign in again.");
   return { app, uid: decoded.uid };
