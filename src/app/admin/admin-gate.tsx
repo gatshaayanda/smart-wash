@@ -2,7 +2,7 @@
 "use client";
 
 import { onAuthStateChanged, signInAnonymously, signOut, type User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase/client";
 import "@/app/big-brothers.css";
@@ -44,7 +44,8 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       stopAdmin = onSnapshot(doc(db, "admins", next.uid), snapshot => {
         if (generation !== authGeneration) return;
         const data = snapshot.data();
-        const expiresAt = Number(data?.sessionExpiresAt);
+        const expiryValue = data?.sessionExpiresAt;
+        const expiresAt = expiryValue instanceof Timestamp ? expiryValue.toMillis() : Number.NaN;
         const allowed = snapshot.exists() && hasAdminRole(data) && Number.isFinite(expiresAt) && expiresAt > Date.now();
         setAuthorized(allowed);
         setChecking(false);
