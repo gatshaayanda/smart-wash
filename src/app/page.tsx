@@ -24,9 +24,6 @@ function addDateKeyDays(value: string, days: number) {
   const date = new Date(Date.UTC(year, month - 1, day + days, 12));
   return date.toISOString().slice(0, 10);
 }
-function bookingDateLabel(value: string) {
-  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value + "T12:00:00Z"));
-}
 function bookingDayName(value: string) {
   return new Date(value + "T12:00:00+02:00").toLocaleDateString("en-US", { weekday: "long", timeZone: "Africa/Gaborone" }).toLowerCase();
 }
@@ -94,12 +91,7 @@ export default function Home() {
   const [mode, setMode] = useState<"site" | "mobile">("site");
   const [serviceId, setServiceId] = useState("");
   const [bookingDate, setBookingDate] = useState("");
-  const [bookingMonth, setBookingMonth] = useState(() => addDateKeyDays(gaboroneDateKey(), 1).slice(0, 7));
   const [bookingServiceId, setBookingServiceId] = useState("");
-  const [bookingTipChoice, setBookingTipChoice] = useState("0");
-  const [bookingCustomTipAmount, setBookingCustomTipAmount] = useState("");
-  const [servicePickerOpen, setServicePickerOpen] = useState(false);
-  const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [bookingTime, setBookingTime] = useState("");
   const bookingTimeRef = useRef(bookingTime);
   useEffect(() => { bookingTimeRef.current = bookingTime; }, [bookingTime]);
@@ -112,7 +104,6 @@ export default function Home() {
   const [repeatPrefill, setRepeatPrefill] = useState<{customerName?:string;phone?:string;vehicleType?:string;vehicleRegistration?:string}|null>(null);
   const [connectionError, setConnectionError] = useState("");
   const [customerNameInput, setCustomerNameInput] = useState("");
-  const [broughtByNameInput, setBroughtByNameInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
   const [helpTeaserDismissed, setHelpTeaserDismissed] = useState(false);
@@ -127,20 +118,7 @@ export default function Home() {
   const activeServices = useMemo(() => services.filter(s => s.active), [services]);
   const selectedQueueService = activeServices.find(service => service.id === serviceId);
   const customerTipValue = tipChoice === "custom" ? Number(customTipAmount || 0) : Number(tipChoice);
-  const bookingCalendarDays = useMemo(() => {
-    const [year, month] = bookingMonth.split("-").map(Number);
-    const count = new Date(Date.UTC(year, month, 0)).getUTCDate();
-    return Array.from({ length: count }, (_, index) => ({ day: index + 1, key: year + "-" + String(month).padStart(2, "0") + "-" + String(index + 1).padStart(2, "0") }));
-  }, [bookingMonth]);
-  const bookingMonthLabel = useMemo(() => new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(bookingMonth + "-01T12:00:00Z")), [bookingMonth]);
-  const selectedBookingService = activeServices.find(service => service.id === bookingServiceId);
-  const bookingTipValue = bookingTipChoice === "custom" ? Number(bookingCustomTipAmount || 0) : Number(bookingTipChoice);
   const minimumBookingDate = addDateKeyDays(gaboroneDateKey(), 1);
-  const shiftBookingMonth = (offset: number) => {
-    const [year, month] = bookingMonth.split("-").map(Number);
-    const next = new Date(Date.UTC(year, month - 1 + offset, 1));
-    setBookingMonth(next.toISOString().slice(0, 7));
-  };
 
   useEffect(() => {
     try { const raw = sessionStorage.getItem("smart-wash-repeat-wash"); if (raw) { const draft = JSON.parse(raw) as {customerName?:string;phone?:string;vehicleType?:string;vehicleRegistration?:string}; sessionStorage.removeItem("smart-wash-repeat-wash"); setRepeatPrefill(draft); setTab("book"); } } catch {}
