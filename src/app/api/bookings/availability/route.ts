@@ -14,6 +14,13 @@ export async function GET(request: Request) {
     const db = getFirestore(app);
     const settingsSnap = await db.doc("businessSettings/main").get();
     const settings = settingsSnap.data() || {};
+    const maxAdvanceBookingDays = Number.isInteger(settings.maxAdvanceBookingDays) ? Number(settings.maxAdvanceBookingDays) : 7;
+    const todayKey = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Gaborone", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const today = new Date(todayKey + "T00:00:00+02:00");
+    const requestedDay = new Date(date + "T00:00:00+02:00");
+    const daysAhead = Math.round((requestedDay.getTime() - today.getTime()) / 86400000);
+    if (daysAhead < 0) return NextResponse.json({ configured: true, slots: [], message: "Choose today or a future date." }, { headers: { "Cache-Control": "no-store" } });
+    if (daysAhead > maxAdvanceBookingDays) return NextResponse.json({ configured: true, slots: [], message: "Bookings can currently be made up to " + maxAdvanceBookingDays + " day(s) ahead. Choose an earlier date." }, { headers: { "Cache-Control": "no-store" } });
     const openingTime = String(settings.openingTime || "");
     const closingTime = String(settings.closingTime || "");
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(openingTime) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(closingTime)) {
