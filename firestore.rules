@@ -15,7 +15,7 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
         && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['owner', 'staff']
         && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt is number
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt > request.time.toMillis();
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt > (request.time.seconds() * 1000 + request.time.nanos() / 1000000);
     }
 
     function validText(value, maxLength) {
