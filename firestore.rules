@@ -10,13 +10,12 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
-    // operations-login writes sessionExpiresAt as a Firestore Timestamp.
     function isAdmin() {
       return signedIn()
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
         && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['owner', 'staff']
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt is timestamp
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt > request.time;
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt is number
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt > request.time.toMillis();
     }
 
     function validText(value, maxLength) {

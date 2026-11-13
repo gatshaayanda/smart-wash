@@ -45,7 +45,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         if (generation !== authGeneration) return;
         const data = snapshot.data();
         const expiryValue = data?.sessionExpiresAt;
-        const expiresAt = expiryValue instanceof Timestamp ? expiryValue.toMillis() : Number.NaN;
+        const expiresAt = expiryValue instanceof Timestamp ? expiryValue.toMillis() : typeof expiryValue === "number" ? expiryValue : Number.NaN;
         const allowed = snapshot.exists() && hasAdminRole(data) && Number.isFinite(expiresAt) && expiresAt > Date.now();
         setAuthorized(allowed);
         setChecking(false);

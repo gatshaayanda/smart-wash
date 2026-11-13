@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
     await getFirestore(app).doc("admins/" + decoded.uid).set({
       role: "owner",
-      sessionExpiresAt: Timestamp.fromMillis(sessionExpiresAt),
+      sessionExpiresAt,
       accessMethod: "one-word",
       updatedAt: new Date().toISOString(),
     }, { merge: true });
