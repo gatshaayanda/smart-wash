@@ -91,8 +91,16 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ word }),
         cache: "no-store",
       });
-      const payload = await response.json() as { ok?: boolean; error?: string };
+      const payload = await response.json() as { ok?: boolean; error?: string; sessionExpiresAt?: number };
       if (!response.ok || !payload.ok) throw new Error(payload.error || "Staff sign-in failed.");
+      if (typeof payload.sessionExpiresAt !== "number" || payload.sessionExpiresAt <= Date.now()) {
+        throw new Error("Staff access was accepted but the server returned an invalid session. Please try again.");
+      }
+      // The server has verified ADMIN_PASSWORD and persisted admins/{uid}.
+      // Enter immediately instead of waiting for Firestore's initial/cache snapshot.
+      setUser(currentUser);
+      setAuthorized(true);
+      setChecking(false);
       setWord("");
       setError("");
     } catch (cause) {
