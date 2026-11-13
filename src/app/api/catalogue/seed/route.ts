@@ -23,7 +23,10 @@ export async function POST() {
   try {
     const db = getFirestore(bigBrothersAdminApp());
     const services = db.collection("services");
+    const seedMarker = db.doc("system/serviceCatalogueSeedV1");
     const added = await db.runTransaction(async transaction => {
+      const marker = await transaction.get(seedMarker);
+      if (marker.exists) return [];
       const existing = await transaction.get(services);
       const names = new Set(existing.docs.map(item => String(item.data().name || "").trim().toLowerCase()));
       const missing = VERIFIED_SERVICES.filter(item => !names.has(item.name.toLowerCase()));
@@ -34,6 +37,7 @@ export async function POST() {
           updatedAt: new Date().toISOString(),
         });
       }
+      transaction.create(seedMarker, { completedAt: new Date().toISOString(), seededNames: missing.map(item => item.name) });
       return missing.map(item => item.name);
     });
     return NextResponse.json({ seeded: true, added, count: added.length }, {
