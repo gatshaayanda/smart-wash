@@ -25,23 +25,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check Firebase service account availability
+        id: credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Firestore rules were not deployed: repository secret FIREBASE_SERVICE_ACCOUNT_JSON is not configured."
+            echo "## Firestore rules deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "The repository secret `FIREBASE_SERVICE_ACCOUNT_JSON` is missing. The rules in the repository have not been published to Firebase." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
+          umask 077
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
+
       - name: Set up Node.js
+        if: steps.credentials.outputs.available == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Install Firebase CLI
+        if: steps.credentials.outputs.available == 'true'
         run: npm install --global firebase-tools
 
-      - name: Write Firebase service account
-        env:
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-        run: |
-          test -n "$FIREBASE_SERVICE_ACCOUNT_JSON"
-          umask 077
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
-
       - name: Verify target project and service account
+        if: steps.credentials.outputs.available == 'true'
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: |
@@ -52,6 +63,7 @@ jobs:
           echo "Verified Smart Wash Firebase project: $PROJECT_ID"
 
       - name: Deploy Firestore rules
+        if: steps.credentials.outputs.available == 'true'
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: |
