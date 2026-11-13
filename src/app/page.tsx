@@ -104,6 +104,7 @@ export default function Home() {
   const [repeatPrefill, setRepeatPrefill] = useState<{customerName?:string;phone?:string;vehicleType?:string;vehicleRegistration?:string}|null>(null);
   const [connectionError, setConnectionError] = useState("");
   const [customerNameInput, setCustomerNameInput] = useState("");
+  const [broughtByNameInput, setBroughtByNameInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
   const [helpTeaserDismissed, setHelpTeaserDismissed] = useState(false);
