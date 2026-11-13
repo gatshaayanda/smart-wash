@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import PwaRegister from "@/app/pwa-register";
-import ServiceCatalogueSeed from "@/app/service-catalogue-seed";
 import "./globals.css";
 import "./pwa.css";
 import "./big-brothers.css";
@@ -33,6 +32,6 @@ export const viewport: Viewport = { themeColor: "#278fba", colorScheme: "light" 
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en"><body>
-    <PwaRegister /><ServiceCatalogueSeed />{children}<Analytics /><SpeedInsights />
+    <PwaRegister />{children}<Analytics /><SpeedInsights />
   </body></html>;
 }
