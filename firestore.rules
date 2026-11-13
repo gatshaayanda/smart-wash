@@ -11,13 +11,11 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      let adminPath = /databases/$(database)/documents/admins/$(request.auth.uid);
-      let adminRecord = get(adminPath).data;
       return signedIn()
-        && exists(adminPath)
-        && adminRecord.role in ['owner', 'staff']
-        && adminRecord.sessionExpiresAt is timestamp
-        && request.time < adminRecord.sessionExpiresAt;
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['owner', 'staff']
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt is timestamp
+        && request.time < get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.sessionExpiresAt;
     }
 
     function validText(value, maxLength) {
