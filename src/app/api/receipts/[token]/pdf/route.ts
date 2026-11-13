@@ -12,7 +12,7 @@ export async function GET(_request: Request, context: { params: Promise<{ token:
     return new Response(new Uint8Array(pdf), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": 'attachment; filename="big-brothers-receipt-' + receipt.receiptRef + '.pdf"',
+        "Content-Disposition": 'attachment; filename="smart-wash-receipt-' + receipt.receiptRef + '.pdf"',
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
       },
