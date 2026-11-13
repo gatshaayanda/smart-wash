@@ -189,14 +189,14 @@ export function createReceiptPdf(receipt: PublicReceipt) {
     { text: "Receipt reference: " + receipt.receiptRef, size: 10, color: "0.08 0.10 0.14" },
     { text: (receipt.receiptKind === "walk-in-ticket" ? "Received: " : "Completed: ") + (receipt.receiptKind === "walk-in-ticket" ? (receipt.joinedAt ? new Date(receipt.joinedAt).toLocaleString("en-BW", { timeZone: "Africa/Gaborone" }) : "Not recorded") : (receipt.completedAt ? new Date(receipt.completedAt).toLocaleString("en-BW", { timeZone: "Africa/Gaborone" }) : "Not recorded")), size: 10, color: "0.08 0.10 0.14" },
     { text: "", size: 8, color: "0 0 0" },
-    { text: "CUSTOMER", size: 10, color: "0.78 0.10 0.13" },
+    { text: "CUSTOMER", size: 10, color: "0.153 0.561 0.729" },
     { text: "Name: " + receipt.customerName, size: 11, color: "0.08 0.13 0.11" },
     { text: "Phone: " + receipt.phone, size: 11, color: "0.08 0.13 0.11" },
-    { text: "VEHICLE & SERVICE", size: 10, color: "0.78 0.10 0.13" },
+    { text: "VEHICLE & SERVICE", size: 10, color: "0.153 0.561 0.729" },
     { text: "Vehicle: " + receipt.vehicleType, size: 11, color: "0.08 0.13 0.11" },
     { text: "Service: " + receipt.serviceName, size: 11, color: "0.08 0.13 0.11" },
     { text: "", size: 8, color: "0 0 0" },
-    { text: receipt.receiptKind === "walk-in-ticket" ? "SERVICE PRICE" : "FINAL AGREED CHARGE", size: 10, color: "0.78 0.10 0.13" },
+    { text: receipt.receiptKind === "walk-in-ticket" ? "SERVICE PRICE" : "FINAL AGREED CHARGE", size: 10, color: "0.153 0.561 0.729" },
     { text: receipt.receiptKind === "walk-in-ticket" ? receipt.priceNote : "BWP " + receipt.amount.toFixed(2), size: receipt.receiptKind === "walk-in-ticket" ? 12 : 22, color: "0.08 0.13 0.11" },
     ...(receipt.receiptKind === "walk-in-ticket" ? [] : [
       { text: "Voluntary tip: BWP " + receipt.tipAmount.toFixed(2), size: 11, color: "0.08 0.13 0.11" },
@@ -213,14 +213,14 @@ export function createReceiptPdf(receipt: PublicReceipt) {
     ]),
   ];
   let y = 780;
-  const ops = ["q", "0.78 0.10 0.13 rg", "40 720 515 92 re f", "Q", "0.78 0.10 0.13 rg", "40 712 515 5 re f"];
+  const ops = ["q", "0.153 0.561 0.729 rg", "40 720 515 92 re f", "Q", "0.153 0.561 0.729 rg", "40 712 515 5 re f"];
   for (const line of lines) {
     if (!line.text) { y -= line.size + 8; continue; }
     ops.push(line.color + " rg");
     ops.push("BT /F1 " + line.size + " Tf 52 " + y + " Td (" + pdfEscape(line.text) + ") Tj ET");
     y -= line.size + 15;
   }
-  ops.push("0.78 0.10 0.13 rg", "40 40 515 4 re f");
+  ops.push("0.153 0.561 0.729 rg", "40 40 515 4 re f");
   const stream = ops.join("\n");
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
