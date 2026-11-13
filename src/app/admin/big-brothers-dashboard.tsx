@@ -162,6 +162,8 @@ async function saveBusinessSettings(form: HTMLFormElement) {
     const mobileCapacity = Number(fields.get("mobileCapacityPerSlot"));
     if (!Number.isInteger(siteCapacity) || siteCapacity < 1 || siteCapacity > 100) throw new Error("Site capacity must be a whole number from 1 to 100.");
     if (!Number.isInteger(mobileCapacity) || mobileCapacity < 1 || mobileCapacity > 100) throw new Error("Mobile capacity must be a whole number from 1 to 100.");
+    const maxAdvanceBookingDays = Number(fields.get("maxAdvanceBookingDays"));
+    if (!Number.isInteger(maxAdvanceBookingDays) || ![0, 1, 2, 3, 7, 14, 30].includes(maxAdvanceBookingDays)) throw new Error("Choose a valid booking window.");
     await saveSettings({
       businessName: String(fields.get("businessName")),
       locationName: String(fields.get("locationName")),
@@ -170,7 +172,7 @@ async function saveBusinessSettings(form: HTMLFormElement) {
       siteCapacityPerSlot: siteCapacity,
       mobileCapacityPerSlot: mobileCapacity,
       mobileCoverage: String(fields.get("mobileCoverage")).split(",").map(value => value.trim()).filter(Boolean),
-      maxAdvanceBookingDays: Number(fields.get("maxAdvanceBookingDays") || 7),
+      maxAdvanceBookingDays,
       openingTime: String(fields.get("openingTime") || ""),
       closingTime: String(fields.get("closingTime") || ""),
       closedDays: String(fields.get("closedDays") || "").split(",").map(value => value.trim().toLowerCase()).filter(Boolean),
