@@ -474,20 +474,22 @@ export default function Home() {
     </section>
     <section className="bb-storefront-section" id="wash-services" aria-labelledby="wash-services-title">
       <div className="bb-storefront-heading">
-        <p className="big-brothers-eyebrow">{homeLanguage === "tn" ? "SMART WASH · G-WEST" : "SMART WASH · G-WEST"}</p>
-        <h2 id="wash-services-title">{homeLanguage === "tn" ? "Tlhopha se koloi ya gago e se tlhokang." : "What does your car need?"}</h2>
-        <p>{homeLanguage === "tn" ? "Ditirelo le ditlhwatlhwa tse di tlhagelelang mo lenaaneng la rona." : "Choose from the services and current prices published by the Smart Wash team."}</p>
+        <p className="big-brothers-eyebrow">SMART WASH · G-WEST</p>
+        <h2 id="wash-services-title">{homeLanguage === "tn" ? "O tlhoka go tlhatswa eng?" : "What does your car need?"}</h2>
+        <p>{homeLanguage === "tn" ? "Tlhopha kwa o batlang go simolola teng. O ka oketsa tse dingwe mo akhaontong ya gago." : "Choose where to start. You can add interior care, polishing and other extras in your account."}</p>
       </div>
-      <div className="bb-storefront-grid">
-        {activeServices.filter(service => typeof service.price === "number" && service.price >= 0).map(service => (
-          <article className="bb-storefront-service" key={service.id}>
-            <div><span className="bb-storefront-category">{service.category || "CAR CARE"}</span><h3>{service.name}</h3><p>{service.description || "Ask the team if you need help choosing this service."}</p></div>
-            <div className="bb-storefront-service-bottom"><strong>{money(service.price)}</strong><button type="button" onClick={() => {setBookingServiceId(service.id);setTab("book");setMode("site");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>{homeLanguage === "tn" ? "Tlhopha" : "Choose service"} ↗</button></div>
-          </article>
-        ))}
-        {!activeServices.length && <div className="bb-storefront-empty">{homeLanguage === "tn" ? "Ditirelo di a laisiwa. Tsweetswee boa gape." : "Services are loading. Please check back in a moment."}</div>}
+      <div className="bb-wash-choice-grid">
+        <button type="button" className="bb-wash-choice" onClick={() => window.location.assign("/account?wash=outside")}>
+          <span className="bb-wash-choice-number">01</span><span className="bb-wash-choice-title">{homeLanguage === "tn" ? "Go tlhatswa kwa ntle" : "Outside wash"}</span><span className="bb-wash-choice-description">{homeLanguage === "tn" ? "Mmele wa koloi le bokantle." : "A clean exterior for your car."}</span><b>{homeLanguage === "tn" ? "Tswela pele" : "Continue"} ↗</b>
+        </button>
+        <button type="button" className="bb-wash-choice" onClick={() => window.location.assign("/account?wash=inside")}>
+          <span className="bb-wash-choice-number">02</span><span className="bb-wash-choice-title">{homeLanguage === "tn" ? "Go phepafatsa mo teng" : "Inside clean"}</span><span className="bb-wash-choice-description">{homeLanguage === "tn" ? "Ditulo, dimmete le mo teng ga koloi." : "Seats, carpets and the inside of your car."}</span><b>{homeLanguage === "tn" ? "Tswela pele" : "Continue"} ↗</b>
+        </button>
+        <button type="button" className="bb-wash-choice bb-wash-choice-featured" onClick={() => window.location.assign("/account?wash=both")}>
+          <span className="bb-wash-choice-number">03</span><span className="bb-wash-choice-title">{homeLanguage === "tn" ? "Kwa ntle le mo teng" : "Inside + outside"}</span><span className="bb-wash-choice-description">{homeLanguage === "tn" ? "Tlhatswo e e feletseng ya koloi." : "Give your car the full clean."}</span><b>{homeLanguage === "tn" ? "Tswela pele" : "Continue"} ↗</b>
+        </button>
       </div>
-      <p className="bb-storefront-note">{homeLanguage === "tn" ? "Ditlhwatlhwa di ka tlhomamisiwa ke setlhopha pele ga tiro." : "Listed prices are starting catalogue prices. The team confirms the service and final amount before work begins."}</p>
+      <p className="bb-storefront-note">{homeLanguage === "tn" ? "Ditirelo tse dingwe le ditlhwatlhwa di tla tlhagelela mo akhaontong ya gago." : "Choose your main wash first. The Smart Wash team’s published services and optional extras can be added in your account."}</p>
     </section>
     <section className="big-brothers-section request-section cinematic-destination-panel" id="request" hidden={homeDestination !== "queue"}><div className="destination-panel-top"><span className="big-brothers-eyebrow">{tab === "book" ? "BOOK A WASH" : queueEntryMode === "staff" ? "ON-SITE TEAM · WALK-IN" : "WALK-IN · JOIN THE QUEUE"}</span><button type="button" className="destination-close" onClick={() => setHomeDestination("home")}>Back to welcome ×</button></div><div className="section-title"><p className="big-brothers-eyebrow">{tab === "book" ? "FUTURE WASH BOOKING" : "WALK-IN INTAKE"}</p><h2>{tab === "book" ? "Plan your next wash." : queueEntryMode === "staff" ? <>Add a customer to the<br/><em>walk-in queue.</em></> : <>At Smart Wash?<br/><em>Join the queue.</em></>}</h2><p>{tab === "book" ? "Choose a preferred time. The team will review availability and confirm your request." : queueEntryMode === "staff" ? "Record the customer's details, or hand over the device so they can complete their own details." : "A few quick details and you’re in. Send the app link to your own WhatsApp so Smart Wash can stay with you after the wash."}</p><p className="bb-returning-customer">Been here before? <Link href="/account" aria-label="My Smart Wash Account">Open My Smart Wash Account &amp; receipts ↗</Link> to find your wash history and request your next visit.</p></div><div className="request-panel">{tab === "book" && <div className="request-tabs"><strong>FUTURE WASH REQUEST</strong></div>}<form onSubmit={submitRequest} className="big-brothers-form"><div className="form-intro"><strong>{tab === "book" ? "Request your next wash" : "Customer details"}</strong><span>{tab === "book" ? "Choose a service, preferred time and contact details. Staff confirm the appointment." : queueEntryMode === "staff" ? "You are assisting the customer. Confirm the wash price face-to-face and enter the agreed amount below." : "Enter your details, choose your wash and add an optional thank-you tip for the Smart Wash team if you wish."}</span></div>
       {tab==="book"&&<>
