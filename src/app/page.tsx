@@ -70,6 +70,17 @@ export default function Home() {
   const [services, setServices] = useState<VulaService[]>([]);
   const [settings, setSettings] = useState<Record<string, unknown>>({});
   const [heroMediaUnavailable, setHeroMediaUnavailable] = useState(false);
+  const [homeLanguage, setHomeLanguage] = useState<"en" | "tn">("en");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("smart-wash:language");
+      if (saved === "tn" || saved === "en") setHomeLanguage(saved);
+    } catch {}
+  }, []);
+  function chooseHomeLanguage(language: "en" | "tn") {
+    setHomeLanguage(language);
+    try { localStorage.setItem("smart-wash:language", language); } catch {}
+  }
   const [homeDestination, setHomeDestination] = useState<"home" | "queue" | "racing">("home");
   const [online, setOnline] = useState(true);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -432,32 +443,51 @@ export default function Home() {
   return <main className="vula bb-cinematic-home bb-home-first-pass">
     <header className="big-brothers-nav cinematic-nav">
       <Link href="/" className="big-brothers-brand"><span className="big-brothers-mark">SW</span><span>{businessName}<small>Sparkling Kasi Deal</small></span></Link>
-      <nav><Link href="/account" className="cinematic-account-link" aria-label="My Smart Wash Account">My washes ↗</Link><a href="/admin" className="cinematic-staff-link">Staff ↗</a></nav>
+      <nav className="bb-customer-nav">
+        <div className="bb-language-switch" role="group" aria-label="Choose language">
+          <button type="button" aria-pressed={homeLanguage === "en"} className={homeLanguage === "en" ? "active" : ""} onClick={() => chooseHomeLanguage("en")}>English</button>
+          <button type="button" aria-pressed={homeLanguage === "tn"} className={homeLanguage === "tn" ? "active" : ""} onClick={() => chooseHomeLanguage("tn")}>Setswana</button>
+        </div>
+        <Link href="/account" className="cinematic-account-link" aria-label="My Smart Wash Account">{homeLanguage === "tn" ? "Akhaonto ya me" : "My washes"} ↗</Link>
+        <a href="/admin" className="cinematic-staff-link">Staff ↗</a>
+      </nav>
     </header>
     <section className="bb-cinema-hero" aria-label="Smart Wash in Botswana">
       <div className="bb-cinema-video">{!heroMediaUnavailable ? <video autoPlay muted loop playsInline preload="none" aria-label="Smart Wash wash-bay film" poster="/images/smart-wash-sign.jpg" src="/videos/smart-wash-location.mp4" onError={() => setHeroMediaUnavailable(true)} /> : <div className="bb-cinema-video-fallback"><span className="big-brothers-mark">SW</span><strong>Sparkling Kasi Deal</strong><small>Botswana · Sparkling Kasi Deal</small></div>}</div><div className="bb-cinema-shade" />
       <div className="bb-cinema-copy">
         <p className="big-brothers-eyebrow">BOTSWANA · SPARKLING KASI DEAL</p>
         <p className="bb-cinema-kicker">Dumela, Kasi.</p>
-        <h1>Your ride.<br/><em>Kasi clean.</em></h1>
-        <p className="bb-cinema-intro">A proper clean, a fair deal and a fresh finish. Your next wash starts here.</p>
+        <h1>{homeLanguage === "tn" ? <>Koloi ya gago.<br/><em>E phatsime.</em></> : <>Your ride.<br/><em>Kasi clean.</em></>}</h1>
+        <p className="bb-cinema-intro">{homeLanguage === "tn" ? "Tlhopha tirelo ya go tlhatswa koloi ya gago kwa G-West." : "A proper clean, a fair deal and a fresh finish. Choose the wash your car needs."}</p>
         <div className="bb-cinema-live"><span className="status-dot" /> SMART WASH <span>·</span> BOTSWANA</div>
         <div className="bb-home-actions">
-          <button type="button" className="bb-home-book-action" onClick={() => {setTab("book");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}><span aria-hidden="true">▦</span> BOOK A WASH <b aria-hidden="true">→</b></button>
-          <div className="bb-home-pathways" aria-label="Other ways to use Smart Wash">
-            <button type="button" className="bb-home-pathway" onClick={() => {setQueueEntryMode("customer");setTab("queue");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>
-              <span className="bb-home-pathway-icon" aria-hidden="true">🚘</span><span><strong>I'm at Smart Wash</strong><small>Join the walk-in queue</small></span><b aria-hidden="true">↗</b>
-            </button>
-            <Link href="/account" className="bb-home-pathway">
-              <span className="bb-home-pathway-icon" aria-hidden="true">◷</span><span><strong>My washes</strong><small>History and receipts</small></span><b aria-hidden="true">↗</b>
-            </Link>
-          </div>
+          <button type="button" className="bb-home-book-action" onClick={() => document.getElementById("wash-services")?.scrollIntoView({behavior:"smooth",block:"start"})}><span aria-hidden="true">▦</span> {homeLanguage === "tn" ? "DIRELO TSA GO TLHATSWa" : "CHOOSE A WASH"} <b aria-hidden="true">↓</b></button>
+          <Link href="/account" className="bb-home-pathway">
+            <span className="bb-home-pathway-icon" aria-hidden="true">◷</span><span><strong>{homeLanguage === "tn" ? "Akhaonto ya me" : "My washes"}</strong><small>{homeLanguage === "tn" ? "Ditiro le diresiti tsa me" : "Bookings and receipts"}</small></span><b aria-hidden="true">↗</b>
+          </Link>
         </div>
         <div className="bb-home-utility-row">
           <details className="bb-home-weather"><summary>Local weather <span>· current conditions</span></summary><LocationWeather showLocationGuide={false} latitude={weatherLatitude} longitude={weatherLongitude} locationLabel={locationName}/></details>
           <button type="button" className="bb-home-racing-link" onClick={() => {setHomeDestination("racing");window.setTimeout(() => document.getElementById("big-brothers-racing")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>Racing garage ↗</button>
         </div>
       </div>
+    </section>
+    <section className="bb-storefront-section" id="wash-services" aria-labelledby="wash-services-title">
+      <div className="bb-storefront-heading">
+        <p className="big-brothers-eyebrow">{homeLanguage === "tn" ? "SMART WASH · G-WEST" : "SMART WASH · G-WEST"}</p>
+        <h2 id="wash-services-title">{homeLanguage === "tn" ? "Tlhopha se koloi ya gago e se tlhokang." : "What does your car need?"}</h2>
+        <p>{homeLanguage === "tn" ? "Ditirelo le ditlhwatlhwa tse di tlhagelelang mo lenaaneng la rona." : "Choose from the services and current prices published by the Smart Wash team."}</p>
+      </div>
+      <div className="bb-storefront-grid">
+        {activeServices.filter(service => typeof service.price === "number" && service.price >= 0).map(service => (
+          <article className="bb-storefront-service" key={service.id}>
+            <div><span className="bb-storefront-category">{service.category || "CAR CARE"}</span><h3>{service.name}</h3><p>{service.description || "Ask the team if you need help choosing this service."}</p></div>
+            <div className="bb-storefront-service-bottom"><strong>{money(service.price)}</strong><button type="button" onClick={() => {setBookingServiceId(service.id);setTab("book");setMode("site");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>{homeLanguage === "tn" ? "Tlhopha" : "Choose service"} ↗</button></div>
+          </article>
+        ))}
+        {!activeServices.length && <div className="bb-storefront-empty">{homeLanguage === "tn" ? "Ditirelo di a laisiwa. Tsweetswee boa gape." : "Services are loading. Please check back in a moment."}</div>}
+      </div>
+      <p className="bb-storefront-note">{homeLanguage === "tn" ? "Ditlhwatlhwa di ka tlhomamisiwa ke setlhopha pele ga tiro." : "Listed prices are starting catalogue prices. The team confirms the service and final amount before work begins."}</p>
     </section>
     <section className="big-brothers-section request-section cinematic-destination-panel" id="request" hidden={homeDestination !== "queue"}><div className="destination-panel-top"><span className="big-brothers-eyebrow">{tab === "book" ? "BOOK A WASH" : queueEntryMode === "staff" ? "ON-SITE TEAM · WALK-IN" : "WALK-IN · JOIN THE QUEUE"}</span><button type="button" className="destination-close" onClick={() => setHomeDestination("home")}>Back to welcome ×</button></div><div className="section-title"><p className="big-brothers-eyebrow">{tab === "book" ? "FUTURE WASH BOOKING" : "WALK-IN INTAKE"}</p><h2>{tab === "book" ? "Plan your next wash." : queueEntryMode === "staff" ? <>Add a customer to the<br/><em>walk-in queue.</em></> : <>At Smart Wash?<br/><em>Join the queue.</em></>}</h2><p>{tab === "book" ? "Choose a preferred time. The team will review availability and confirm your request." : queueEntryMode === "staff" ? "Record the customer's details, or hand over the device so they can complete their own details." : "A few quick details and you’re in. Send the app link to your own WhatsApp so Smart Wash can stay with you after the wash."}</p><p className="bb-returning-customer">Been here before? <Link href="/account" aria-label="My Smart Wash Account">Open My Smart Wash Account &amp; receipts ↗</Link> to find your wash history and request your next visit.</p></div><div className="request-panel">{tab === "book" && <div className="request-tabs"><strong>FUTURE WASH REQUEST</strong></div>}<form onSubmit={submitRequest} className="big-brothers-form"><div className="form-intro"><strong>{tab === "book" ? "Request your next wash" : "Customer details"}</strong><span>{tab === "book" ? "Choose a service, preferred time and contact details. Staff confirm the appointment." : queueEntryMode === "staff" ? "You are assisting the customer. Confirm the wash price face-to-face and enter the agreed amount below." : "Enter your details, choose your wash and add an optional thank-you tip for the Smart Wash team if you wish."}</span></div>
       {tab==="book"&&<>
