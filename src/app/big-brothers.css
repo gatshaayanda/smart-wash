@@ -1669,3 +1669,13 @@
  .customer-account-compact .customer-wash-choice-options button{min-height:108px;padding:7px 5px}
  .customer-account-compact .customer-wash-choice-options button span{font-size:9px}
 }
+
+
+/* Compact, touch-friendly optional booking extras */
+.sw-booking-addons{border:1px solid #d8e1e5;border-radius:12px;padding:12px;margin:12px 0;background:#f7fafb;min-width:0}
+.sw-booking-addons legend{padding:0 5px;font-weight:800;color:#183746;font-size:14px}
+.sw-booking-addons legend small{display:block;font-size:11px;font-weight:500;color:#60727b;margin-top:3px}
+.sw-booking-addons label{display:flex;align-items:center;gap:10px;padding:10px 2px;border-top:1px solid #e4eaed;font-size:13px}
+.sw-booking-addons label input{width:18px;height:18px;flex:0 0 18px;accent-color:#176b87}
+.sw-booking-addons label span{flex:1;min-width:0}
+.sw-booking-addons label strong{white-space:nowrap;font-size:12px;color:#183746}
