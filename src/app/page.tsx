@@ -457,11 +457,11 @@ export default function Home() {
       <div className="bb-cinema-copy">
         <p className="big-brothers-eyebrow">BOTSWANA · SPARKLING KASI DEAL</p>
         <p className="bb-cinema-kicker">Dumela, Kasi.</p>
-        <h1>{homeLanguage === "tn" ? <>Koloi ya gago.<br/><em>E phatsime.</em></> : <>Your ride.<br/><em>Kasi clean.</em></>}</h1>
+        <h1>{homeLanguage === "tn" ? <>Koloi ya gago.<br/><em>E phepa.</em></> : <>Your ride.<br/><em>Kasi clean.</em></>}</h1>
         <p className="bb-cinema-intro">{homeLanguage === "tn" ? "Tlhopha tirelo ya go tlhatswa koloi ya gago kwa G-West." : "A proper clean, a fair deal and a fresh finish. Choose the wash your car needs."}</p>
         <div className="bb-cinema-live"><span className="status-dot" /> SMART WASH <span>·</span> BOTSWANA</div>
         <div className="bb-home-actions">
-          <button type="button" className="bb-home-book-action" onClick={() => document.getElementById("wash-services")?.scrollIntoView({behavior:"smooth",block:"start"})}><span aria-hidden="true">▦</span> {homeLanguage === "tn" ? "DIRELO TSA GO TLHATSWa" : "CHOOSE A WASH"} <b aria-hidden="true">↓</b></button>
+          <button type="button" className="bb-home-book-action" onClick={() => document.getElementById("wash-services")?.scrollIntoView({behavior:"smooth",block:"start"})}><span aria-hidden="true">▦</span> {homeLanguage === "tn" ? "DITIRELO TSA GO TLHATSWA" : "CHOOSE A WASH"} <b aria-hidden="true">↓</b></button>
           <Link href="/account" className="bb-home-pathway">
             <span className="bb-home-pathway-icon" aria-hidden="true">◷</span><span><strong>{homeLanguage === "tn" ? "Akhaonto ya me" : "My washes"}</strong><small>{homeLanguage === "tn" ? "Ditiro le diresiti tsa me" : "Bookings and receipts"}</small></span><b aria-hidden="true">↗</b>
           </Link>
