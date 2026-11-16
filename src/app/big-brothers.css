@@ -1599,3 +1599,73 @@
 .customer-wash-choice-next button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:760px){.bb-wash-choice-grid{grid-template-columns:1fr}.bb-wash-choice{min-height:128px;padding:16px}.customer-wash-choice-panel{margin:12px 14px 20px;padding:17px}.customer-wash-choice-options{grid-template-columns:1fr}.customer-wash-choice-options button{min-height:84px}.customer-wash-choice-next{align-items:stretch;flex-direction:column}.customer-wash-choice-next button{width:100%}}
 @media(prefers-reduced-motion:reduce){.bb-wash-choice{transition:none}.bb-wash-choice:hover{transform:none}}
+
+
+/* Customer account redesign — next-wash-first hierarchy, compact mobile workspace. */
+.customer-account-compact{background:#f3f7f9;color:#10283d;padding-bottom:88px}
+.customer-account-compact .customer-account-header{position:sticky;top:0;z-index:20;min-height:58px;padding:8px clamp(14px,3vw,28px);background:rgba(5,22,43,.97);backdrop-filter:blur(12px)}
+.customer-account-compact .customer-account-workspace-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;width:min(100% - 28px,980px);margin:18px auto 12px;padding:18px 20px;border:1px solid #dce7ed;border-radius:13px;background:#fff;box-shadow:0 5px 18px #10283d08}
+.customer-account-compact .customer-account-workspace-intro .big-brothers-eyebrow{margin:0 0 7px;color:#2586ad;font-size:9px;letter-spacing:.13em}
+.customer-account-compact .customer-account-greeting{margin:0 0 2px;color:#526776;font-size:12px;font-weight:750}
+.customer-account-compact .customer-account-workspace-intro h1{margin:0;color:#10283d;font:650 clamp(25px,4vw,34px)/1.02 "Space Grotesk",Arial,sans-serif;letter-spacing:-.055em}
+.customer-account-compact .customer-account-workspace-intro>div:first-child>p:last-child{margin:7px 0 0;color:#647887;font-size:11px;line-height:1.45}
+.customer-account-compact .customer-account-workspace-actions{display:grid;justify-items:end;gap:7px;min-width:180px}
+.customer-account-compact .customer-account-status{color:#647887;font-size:9px;text-align:right}
+.customer-account-compact .customer-account-primary-action{min-height:40px;padding:10px 14px;border-radius:8px;background:#087eaf;color:#fff;font-size:10px;letter-spacing:.04em}
+.customer-account-compact .customer-wash-choice-panel{width:min(100% - 28px,980px);margin:0 auto 12px;padding:17px 18px;border-color:#d9e5eb;border-radius:13px;box-shadow:0 5px 18px #10283d08}
+.customer-account-compact .customer-wash-choice-panel .big-brothers-eyebrow{margin:0 0 5px;color:#278fba;font-size:9px}
+.customer-account-compact .customer-wash-choice-panel h2{margin:0 0 5px;font-size:clamp(22px,3vw,29px);line-height:1.06}
+.customer-account-compact .customer-wash-choice-panel>div:first-child>p:last-child{font-size:11px;line-height:1.45}
+.customer-account-compact .customer-wash-choice-options{gap:8px;margin-top:13px}
+.customer-account-compact .customer-wash-choice-options button{min-height:94px;padding:11px;border-radius:9px;gap:5px}
+.customer-account-compact .customer-wash-choice-options button.selected{padding:10px}
+.customer-account-compact .customer-wash-choice-options button span{font-size:12px;line-height:1.2}
+.customer-account-compact .customer-wash-choice-options button small{font-size:10px;line-height:1.35}
+.customer-account-compact .customer-wash-choice-options button b{font-size:9px}
+.customer-account-compact .customer-wash-choice-next{margin-top:10px;padding-top:10px}
+.customer-account-compact .customer-wash-choice-next span{font-size:10px}
+.customer-account-compact .customer-wash-choice-next button{min-height:40px;padding:10px 14px;border-radius:8px;background:#087eaf;font-size:10px}
+.customer-account-compact .customer-account-tools{width:min(100% - 28px,980px);margin:12px auto;padding:13px;border:1px solid #dce7ed;border-radius:12px;background:#fff}
+.customer-account-compact .customer-account-tools-heading{margin-bottom:7px}
+.customer-account-compact .customer-account-tools-heading .big-brothers-eyebrow{margin:0 0 3px;color:#278fba;font-size:9px}
+.customer-account-compact .customer-account-tools-heading>span{color:#647887;font-size:10px}
+.customer-account-compact .customer-account-tools>button{min-height:52px;padding:8px 6px;border-top:1px solid #edf1f3}
+.customer-account-compact .customer-account-tools>button strong{font-size:11px}
+.customer-account-compact .customer-account-tools>button small{font-size:9px;line-height:1.35}
+.customer-account-compact .customer-account-tools>button>b{font-size:9px}
+.customer-account-compact .customer-account-planner-section,.customer-account-compact .customer-account-receipts-preview,.customer-account-compact .customer-account-secondary-disclosure{width:min(100% - 28px,980px);margin:12px auto}
+.customer-account-compact .customer-account-receipts-preview{padding:14px;border:1px solid #dce7ed;border-radius:12px;background:#fff}
+.customer-account-compact .customer-account-receipts-heading h2{font-size:18px}
+.customer-account-compact .customer-account-secondary-disclosure{border:1px solid #dce7ed;border-radius:10px;background:#fff}
+.customer-account-compact .customer-account-secondary-disclosure>summary{min-height:54px;padding:10px 13px}
+.customer-account-compact .customer-account-secondary-disclosure>summary strong{font-size:11px}
+.customer-account-compact .customer-account-secondary-disclosure>summary small{font-size:9px;line-height:1.35}
+.customer-account-compact .customer-account-card,.customer-account-compact .customer-regulars-club{margin:0;padding:14px;border-top:1px solid #edf1f3}
+.customer-account-compact .customer-account-card h2,.customer-account-compact .customer-regulars-club h2{font-size:18px}
+.customer-account-compact .customer-account-card p,.customer-account-compact .customer-regulars-club p{font-size:11px;line-height:1.5}
+.customer-account-compact .customer-bottom-nav{box-shadow:0 -5px 18px #10283d12}
+.customer-account-compact .customer-account-footer{width:min(100% - 28px,980px);margin:18px auto 0}
+@media(max-width:680px){
+ .customer-account-compact .customer-account-header{min-height:54px;padding:7px 12px}
+ .customer-account-compact .customer-account-workspace-intro{grid-template-columns:1fr;gap:10px;width:calc(100% - 22px);margin:10px auto 9px;padding:13px}
+ .customer-account-compact .customer-account-workspace-actions{grid-template-columns:1fr;justify-items:stretch;min-width:0;gap:6px}
+ .customer-account-compact .customer-account-status{text-align:left}
+ .customer-account-compact .customer-account-primary-action{width:100%;min-height:42px}
+ .customer-account-compact .customer-wash-choice-panel{width:calc(100% - 22px);margin:0 auto 9px;padding:13px}
+ .customer-account-compact .customer-wash-choice-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .customer-account-compact .customer-wash-choice-options button{min-height:102px;padding:8px 7px;gap:5px}
+ .customer-account-compact .customer-wash-choice-options button.selected{padding:7px 6px}
+ .customer-account-compact .customer-wash-choice-options button span{font-size:10px}
+ .customer-account-compact .customer-wash-choice-options button small{font-size:8px;line-height:1.3}
+ .customer-account-compact .customer-wash-choice-options button b{font-size:8px}
+ .customer-account-compact .customer-wash-choice-next{align-items:stretch;gap:8px}
+ .customer-account-compact .customer-wash-choice-next button{width:100%}
+ .customer-account-compact .customer-account-tools,.customer-account-compact .customer-account-planner-section,.customer-account-compact .customer-account-receipts-preview,.customer-account-compact .customer-account-secondary-disclosure{width:calc(100% - 22px);margin:9px auto}
+ .customer-account-compact .customer-account-tools{padding:10px}
+ .customer-account-compact .customer-account-tools>button{min-height:48px}
+}
+@media(max-width:360px){
+ .customer-account-compact .customer-account-brand small{display:none}
+ .customer-account-compact .customer-wash-choice-options button{min-height:108px;padding:7px 5px}
+ .customer-account-compact .customer-wash-choice-options button span{font-size:9px}
+}
