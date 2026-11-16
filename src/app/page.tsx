@@ -103,6 +103,8 @@ export default function Home() {
   const [serviceId, setServiceId] = useState("");
   const [bookingDate, setBookingDate] = useState("");
   const [bookingServiceId, setBookingServiceId] = useState("");
+  const [bookingWashChoice, setBookingWashChoice] = useState<"outside" | "inside" | "both" | "unspecified">("unspecified");
+  const [bookingAddOnIds, setBookingAddOnIds] = useState<string[]>([]);
   const [bookingTime, setBookingTime] = useState("");
   const bookingTimeRef = useRef(bookingTime);
   useEffect(() => { bookingTimeRef.current = bookingTime; }, [bookingTime]);
@@ -178,7 +180,7 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => { const params = new URLSearchParams(window.location.search); if (params.get("journey") === "book") { setHomeDestination("queue"); setTab("book"); setBookingDate(params.get("preferredDate") || ""); setBookingTime(params.get("preferredTime") || ""); setMode(params.get("mode") === "mobile" ? "mobile" : "site"); window.setTimeout(() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80); } }, []);
+  useEffect(() => { try { const saved = localStorage.getItem("smart-wash:wash-choice"); if (saved === "outside" || saved === "inside" || saved === "both") setBookingWashChoice(saved); } catch {} const params = new URLSearchParams(window.location.search); if (params.get("journey") === "book") { setHomeDestination("queue"); setTab("book"); setBookingDate(params.get("preferredDate") || ""); setBookingTime(params.get("preferredTime") || ""); setMode(params.get("mode") === "mobile" ? "mobile" : "site"); window.setTimeout(() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80); } }, []);
   useEffect(() => {
     if (tab !== "book" || !bookingDate) { setAvailableSlots([]); setAvailabilityConfigured(null); setAvailabilityMessage(""); return; }
     if (!online) { setAvailableSlots([]); setAvailabilityConfigured(null); setAvailabilityMessage("Offline: live availability cannot be checked. Any saved request remains unconfirmed until staff review."); return; }
@@ -298,7 +300,11 @@ export default function Home() {
         if (closedDays.includes(dayName)) throw new Error("That day is marked closed by Smart Wash. Choose another date.");
         const scheduledFor = scheduledDate.toISOString();
         collectionName = "bookings";
-        data = { ...common, serviceId: bookingServiceId || "general-request", serviceName: activeServices.find(s => s.id === bookingServiceId)?.name || "General car wash request", serviceMode: mode, locationId: mode === "site" ? locationName : "coverage-review", address, scheduledFor, paymentMethod: String(form.get("paymentMethod") || "pay-on-site"), paymentStatus: "unpaid", ...(tipAmount > 0 ? { tipAmount } : {}), status: "requested" };
+        const mainService = activeServices.find(s => s.id === bookingServiceId);
+        const addOns = bookingAddOnIds.map(id => activeServices.find(service => service.id === id)).filter((service): service is VulaService => Boolean(service && service.id !== bookingServiceId)).map(service => ({ serviceId: service.id, serviceName: service.name, ...(typeof service.price === "number" ? { price: service.price } : {}) }));
+        const washChoiceLabel = bookingWashChoice === "outside" ? "Outside wash" : bookingWashChoice === "inside" ? "Inside clean" : bookingWashChoice === "both" ? "Inside + outside" : "Wash preference not specified";
+        const serviceSummary = [washChoiceLabel, mainService?.name, ...addOns.map(item => item.serviceName)].filter(Boolean).join(" · ");
+        data = { ...common, serviceId: bookingServiceId || "general-request", serviceName: serviceSummary || "General car wash request", washChoice: bookingWashChoice, addOns, serviceMode: mode, locationId: mode === "site" ? locationName : "coverage-review", address, scheduledFor, paymentMethod: String(form.get("paymentMethod") || "pay-on-site"), paymentStatus: "unpaid", ...(tipAmount > 0 ? { tipAmount } : {}), status: "requested" };
       } else if (tab === "queue") {
         collectionName = "queueEntries";
         const selectedOffer = activeServices.find(s => s.id === serviceId && typeof s.price === "number" && s.price >= 0);
@@ -497,7 +503,10 @@ export default function Home() {
           <div className="sw-booking-simple-heading"><strong>Book a future wash</strong><span>Four details, then the team confirms your time.</span></div>
           <div className="mode-switch"><button type="button" className={mode==="site"?"selected":""} onClick={()=>setMode("site")}>At the wash</button><button type="button" className={mode==="mobile"?"selected":""} onClick={()=>setMode("mobile")}>Mobile service</button></div>
           {mode==="mobile"&&<p className="coverage-note">{mobileCoverage.length?"Coverage areas: "+mobileCoverage.join(", "):"Mobile service needs staff coverage confirmation."}</p>}
-          <label>Choose a wash service<select name="bookingService" value={bookingServiceId} onChange={event=>setBookingServiceId(event.target.value)}><option value="">General car wash · discuss with team</option>{activeServices.filter(service=>typeof service.price==="number"&&service.price>=0).map(service=><option key={service.id} value={service.id}>{service.name} · {money(service.price)}</option>)}</select></label>
+          <label>Your main wash<select value={bookingWashChoice} onChange={event=>setBookingWashChoice(event.target.value as "outside" | "inside" | "both" | "unspecified")}><option value="unspecified">Choose your wash</option><option value="outside">Outside wash</option><option value="inside">Inside clean</option><option value="both">Inside + outside</option></select></label>
+          <label>Specific service (optional)<select name="bookingService" value={bookingServiceId} onChange={event=>setBookingServiceId(event.target.value)}><option value="">Discuss the main wash with the team</option>{activeServices.filter(service=>typeof service.price==="number"&&service.price>=0).map(service=><option key={service.id} value={service.id}>{service.name} · {money(service.price)}</option>)}</select></label>
+          <fieldset className="sw-booking-addons"><legend>Anything extra? <small>Optional · added to your request, not charged now</small></legend>{activeServices.filter(service=>service.active&&typeof service.price==="number"&&service.price>=0&&service.id!==bookingServiceId).map(service=><label key={service.id}><input type="checkbox" checked={bookingAddOnIds.includes(service.id)} onChange={event=>setBookingAddOnIds(current=>event.target.checked?[...current,service.id]:current.filter(id=>id!==service.id))}/><span>{service.name}</span><strong>{money(service.price)}</strong></label>)}{!activeServices.some(service=>service.active&&typeof service.price==="number"&&service.price>=0&&service.id!==bookingServiceId)&&<small>Optional extras will appear here when the service list is available.</small>}</fieldset>
+          <p className="sw-booking-availability">Your wash choice and extras will be saved with this request so the team sees the same details. Final price and appointment are confirmed by staff.</p>
           <div className="sw-booking-date-grid">
             <label>Preferred date<input type="date" min={minimumBookingDate} value={bookingDate} onChange={event=>{setBookingDate(event.target.value);setBookingTime("");}} required/></label>
             <label>Preferred time
