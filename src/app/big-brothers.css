@@ -1566,3 +1566,36 @@
 .bb-storefront-empty{grid-column:1/-1;padding:20px;border-radius:10px;background:#eaf5fa;color:#53636d;font-size:12px}
 @media(max-width:760px){.bb-storefront-section{padding:34px 18px 42px}.bb-storefront-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bb-storefront-service{min-height:158px;padding:13px}.bb-storefront-service h3{font-size:15px}.bb-customer-nav{gap:8px!important}.bb-language-switch button{padding:7px 8px}}
 @media(max-width:420px){.bb-storefront-grid{grid-template-columns:1fr}.bb-storefront-service{min-height:132px}.bb-customer-nav{width:100%;justify-content:space-between}.bb-customer-nav .cinematic-staff-link{display:none}}
+
+
+/* Smart Wash: three clear customer wash choices */
+.bb-storefront-section{color:#fff}
+.bb-storefront-heading .big-brothers-eyebrow,.bb-storefront-heading h2,.bb-storefront-heading>p:last-child{color:#fff}
+.bb-storefront-heading .big-brothers-eyebrow{opacity:.82}
+.bb-storefront-heading h2{font-size:clamp(30px,4vw,44px);line-height:1.06}
+.bb-storefront-heading>p:last-child{font-size:14px;line-height:1.55;opacity:.88}
+.bb-wash-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.bb-wash-choice{appearance:none;text-align:left;min-height:190px;padding:20px;border:1px solid #ffffff55;border-radius:12px;background:#ffffff12;color:#fff;display:flex;flex-direction:column;align-items:flex-start;gap:10px;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.bb-wash-choice:hover,.bb-wash-choice:focus-visible{background:#ffffff20;border-color:#fff;transform:translateY(-2px);outline:none}
+.bb-wash-choice-featured{background:#ffffff20;border-color:#ffffffa0}
+.bb-wash-choice-number{font-size:10px;letter-spacing:.14em;font-weight:800;opacity:.72}
+.bb-wash-choice-title{font:600 clamp(20px,2vw,25px)/1.1 "Space Grotesk",Arial,sans-serif;letter-spacing:-.04em}
+.bb-wash-choice-description{font-size:13px;line-height:1.45;opacity:.84}
+.bb-wash-choice b{margin-top:auto;padding-top:10px;font-size:12px}
+.bb-storefront-note{color:#fff;opacity:.8;font-size:12px}
+.customer-wash-choice-panel{max-width:1180px;margin:16px auto 24px;padding:24px;border:1px solid #dce5ea;border-radius:14px;background:#fff;box-shadow:0 12px 32px #0a19310c;color:#0a1931}
+.customer-wash-choice-panel>div:first-child{max-width:650px}
+.customer-wash-choice-panel h2{font:600 clamp(24px,3vw,34px)/1.08 "Space Grotesk",Arial,sans-serif;letter-spacing:-.045em;margin:0 0 8px}
+.customer-wash-choice-panel>div:first-child>p:last-child{font-size:13px;line-height:1.55;color:#5d6972;margin:0}
+.customer-wash-choice-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:18px}
+.customer-wash-choice-options button{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;padding:14px;border:1px solid #dce5ea;border-radius:9px;background:#fff;color:#0a1931;cursor:pointer;min-height:104px}
+.customer-wash-choice-options button.selected{border:2px solid #278fba;background:#eef8fc;padding:13px}
+.customer-wash-choice-options button span{font-size:15px;font-weight:800}
+.customer-wash-choice-options button small{font-size:12px;line-height:1.4;color:#65717a}
+.customer-wash-choice-options button b{margin-top:auto;font-size:11px;color:#17678d}
+.customer-wash-choice-next{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:15px;padding-top:14px;border-top:1px solid #e8eef1}
+.customer-wash-choice-next span{font-size:12px;line-height:1.45;color:#64717a}
+.customer-wash-choice-next button{border:0;border-radius:7px;background:#0a1931;color:#fff;padding:12px 16px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
+.customer-wash-choice-next button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:760px){.bb-wash-choice-grid{grid-template-columns:1fr}.bb-wash-choice{min-height:128px;padding:16px}.customer-wash-choice-panel{margin:12px 14px 20px;padding:17px}.customer-wash-choice-options{grid-template-columns:1fr}.customer-wash-choice-options button{min-height:84px}.customer-wash-choice-next{align-items:stretch;flex-direction:column}.customer-wash-choice-next button{width:100%}}
+@media(prefers-reduced-motion:reduce){.bb-wash-choice{transition:none}.bb-wash-choice:hover{transform:none}}
