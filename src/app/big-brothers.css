@@ -1543,3 +1543,26 @@
 @media(prefers-reduced-motion:reduce){
  .bb-home-book-action,.bb-home-pathway{transition:none;scroll-behavior:auto;}
 }
+
+
+/* Smart Wash service-first storefront */
+.bb-customer-nav{display:flex;align-items:center;gap:14px!important;flex-wrap:wrap}
+.bb-language-switch{display:inline-flex;align-items:center;gap:3px;padding:3px;border:1px solid #ffffff66;border-radius:999px;background:#07182a88}
+.bb-language-switch button{border:0;border-radius:999px;background:transparent;color:#fff;padding:7px 10px;font-size:10px;font-weight:700;cursor:pointer}
+.bb-language-switch button.active{background:#fff;color:#0a1931}
+.bb-storefront-section{max-width:1180px;margin:0 auto;padding:44px 24px 58px;color:#0a1931}
+.bb-storefront-heading{max-width:680px;margin:0 0 22px}
+.bb-storefront-heading h2{font:600 clamp(28px,4vw,42px)/1.02 "Space Grotesk",Arial,sans-serif;letter-spacing:-.055em;margin:0 0 9px}
+.bb-storefront-heading>p:last-child{font-size:13px;line-height:1.6;color:#606b74;margin:0}
+.bb-storefront-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bb-storefront-service{min-width:0;min-height:166px;border:1px solid #dce5ea;border-radius:11px;background:#fff;padding:16px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;box-shadow:0 5px 18px #0a19310a}
+.bb-storefront-category{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#247fa6}
+.bb-storefront-service h3{font:600 17px/1.12 "Space Grotesk",Arial,sans-serif;letter-spacing:-.035em;margin:8px 0 5px}
+.bb-storefront-service p{font-size:11px;line-height:1.45;color:#64717a;margin:0}
+.bb-storefront-service-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #edf1f3;padding-top:12px}
+.bb-storefront-service-bottom strong{font-size:15px;white-space:nowrap}
+.bb-storefront-service-bottom button{border:0;border-radius:6px;background:#0a1931;color:white;padding:9px 11px;font-size:10px;font-weight:800;white-space:nowrap;cursor:pointer}
+.bb-storefront-note{font-size:10px;line-height:1.5;color:#697680;margin:14px 0 0}
+.bb-storefront-empty{grid-column:1/-1;padding:20px;border-radius:10px;background:#eaf5fa;color:#53636d;font-size:12px}
+@media(max-width:760px){.bb-storefront-section{padding:34px 18px 42px}.bb-storefront-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bb-storefront-service{min-height:158px;padding:13px}.bb-storefront-service h3{font-size:15px}.bb-customer-nav{gap:8px!important}.bb-language-switch button{padding:7px 8px}}
+@media(max-width:420px){.bb-storefront-grid{grid-template-columns:1fr}.bb-storefront-service{min-height:132px}.bb-customer-nav{width:100%;justify-content:space-between}.bb-customer-nav .cinematic-staff-link{display:none}}
