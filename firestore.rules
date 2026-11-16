@@ -41,7 +41,7 @@ service cloud.firestore {
       return request.resource.data.keys().hasOnly([
           'customerId', 'customerName', 'broughtByName', 'phone', 'vehicleType',
           'vehicleRegistration', 'serviceId', 'serviceName',
-          'serviceMode', 'locationId', 'address', 'scheduledFor',
+          'serviceMode', 'washChoice', 'addOns', 'locationId', 'address', 'scheduledFor',
           'notes', 'priceQuote', 'paymentMethod', 'paymentStatus', 'tipAmount',
           'status', 'createdAt', 'updatedAt'
         ])
@@ -60,6 +60,8 @@ service cloud.firestore {
         && validText(request.resource.data.serviceId, 120)
         && validText(request.resource.data.serviceName, 120)
         && request.resource.data.serviceMode in ['site', 'mobile']
+        && (!request.resource.data.keys().hasAny(['washChoice']) || request.resource.data.washChoice in ['outside', 'inside', 'both', 'unspecified'])
+        && (!request.resource.data.keys().hasAny(['addOns']) || (request.resource.data.addOns is list && request.resource.data.addOns.size() <= 12))
         && validText(request.resource.data.locationId, 120)
         && validText(request.resource.data.address, 500)
         && validText(request.resource.data.scheduledFor, 40)
