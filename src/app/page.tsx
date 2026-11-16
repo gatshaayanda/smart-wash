@@ -429,11 +429,35 @@ export default function Home() {
     </section></main>;
   }
 
-  return <main className="vula bb-cinematic-home">
-    <header className="big-brothers-nav cinematic-nav"><Link href="/" className="big-brothers-brand"><span className="big-brothers-mark">SW</span><span>{businessName}<small>Sparkling Kasi Deal</small></span></Link><nav><Link href="/account" aria-label="My Smart Wash Account">My Smart Wash Account</Link><a href="/admin" className="cinematic-staff-link">Staff ↗</a></nav></header>
+  return <main className="vula bb-cinematic-home bb-home-first-pass">
+    <header className="big-brothers-nav cinematic-nav">
+      <Link href="/" className="big-brothers-brand"><span className="big-brothers-mark">SW</span><span>{businessName}<small>Sparkling Kasi Deal</small></span></Link>
+      <nav><Link href="/account" className="cinematic-account-link" aria-label="My Smart Wash Account">My washes ↗</Link><a href="/admin" className="cinematic-staff-link">Staff ↗</a></nav>
+    </header>
     <section className="bb-cinema-hero" aria-label="Smart Wash in Botswana">
       <div className="bb-cinema-video">{!heroMediaUnavailable ? <video autoPlay muted loop playsInline preload="none" aria-label="Smart Wash wash-bay film" poster="/images/smart-wash-sign.jpg" src="/videos/smart-wash-location.mp4" onError={() => setHeroMediaUnavailable(true)} /> : <div className="bb-cinema-video-fallback"><span className="big-brothers-mark">SW</span><strong>Sparkling Kasi Deal</strong><small>Botswana · Sparkling Kasi Deal</small></div>}</div><div className="bb-cinema-shade" />
-      <div className="bb-cinema-copy"><p className="big-brothers-eyebrow">BOTSWANA · SPARKLING KASI DEAL</p><p className="bb-cinema-kicker">Dumela, Kasi.</p><h1>Your ride.<br/><em>Kasi clean.</em></h1><p className="bb-cinema-intro">A proper clean, a fair deal and a fresh finish. Your next wash starts here.</p><div className="bb-cinema-live"><span className="status-dot" /> SMART WASH <span>·</span> BOTSWANA</div><div className="bb-cinema-actions"><button type="button" className="bb-cinema-primary-action" onClick={() => {setTab("book");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>BOOK A WASH <span aria-hidden="true">→</span></button><div className="bb-cinema-shortcuts"><Link href="/account" aria-label="My Smart Wash Account">My Smart Wash Account ↗</Link><button type="button" onClick={() => {setHomeDestination("racing");window.setTimeout(() => document.getElementById("big-brothers-racing")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>Racing garage ↗</button></div><div className="bb-home-utilities"><details className="bb-home-weather"><summary>Local weather <span>· current conditions</span></summary><LocationWeather showLocationGuide={false} latitude={weatherLatitude} longitude={weatherLongitude} locationLabel={locationName}/></details><div className="bb-onsite-team" aria-label="On-site staff walk-in tools"><span className="bb-onsite-team-label">ON-SITE TEAM</span><button type="button" onClick={() => {setQueueEntryMode("staff");setTab("queue");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>Open walk-in queue <span aria-hidden="true">↗</span></button></div></div></div></div>
+      <div className="bb-cinema-copy">
+        <p className="big-brothers-eyebrow">BOTSWANA · SPARKLING KASI DEAL</p>
+        <p className="bb-cinema-kicker">Dumela, Kasi.</p>
+        <h1>Your ride.<br/><em>Kasi clean.</em></h1>
+        <p className="bb-cinema-intro">A proper clean, a fair deal and a fresh finish. Your next wash starts here.</p>
+        <div className="bb-cinema-live"><span className="status-dot" /> SMART WASH <span>·</span> BOTSWANA</div>
+        <div className="bb-home-actions">
+          <button type="button" className="bb-home-book-action" onClick={() => {setTab("book");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}><span aria-hidden="true">▦</span> BOOK A WASH <b aria-hidden="true">→</b></button>
+          <div className="bb-home-pathways" aria-label="Other ways to use Smart Wash">
+            <button type="button" className="bb-home-pathway" onClick={() => {setQueueEntryMode("customer");setTab("queue");setHomeDestination("queue");window.setTimeout(() => document.getElementById("request")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>
+              <span className="bb-home-pathway-icon" aria-hidden="true">🚘</span><span><strong>I'm at Smart Wash</strong><small>Join the walk-in queue</small></span><b aria-hidden="true">↗</b>
+            </button>
+            <Link href="/account" className="bb-home-pathway">
+              <span className="bb-home-pathway-icon" aria-hidden="true">◷</span><span><strong>My washes</strong><small>History and receipts</small></span><b aria-hidden="true">↗</b>
+            </Link>
+          </div>
+        </div>
+        <div className="bb-home-utility-row">
+          <details className="bb-home-weather"><summary>Local weather <span>· current conditions</span></summary><LocationWeather showLocationGuide={false} latitude={weatherLatitude} longitude={weatherLongitude} locationLabel={locationName}/></details>
+          <button type="button" className="bb-home-racing-link" onClick={() => {setHomeDestination("racing");window.setTimeout(() => document.getElementById("big-brothers-racing")?.scrollIntoView({behavior:"smooth",block:"start"}),80);}}>Racing garage ↗</button>
+        </div>
+      </div>
     </section>
     <section className="big-brothers-section request-section cinematic-destination-panel" id="request" hidden={homeDestination !== "queue"}><div className="destination-panel-top"><span className="big-brothers-eyebrow">{tab === "book" ? "BOOK A WASH" : "ON-SITE TEAM · WALK-IN"}</span><button type="button" className="destination-close" onClick={() => setHomeDestination("home")}>Back to welcome ×</button></div><div className="section-title"><p className="big-brothers-eyebrow">{tab === "book" ? "FUTURE WASH BOOKING" : "WALK-IN INTAKE"}</p><h2>{tab === "book" ? "Plan your next wash." : <>Add a customer to the<br/><em>walk-in queue.</em></>}</h2><p>{tab === "book" ? "Choose a preferred time. The team will review availability and confirm your request." : queueEntryMode === "staff" ? "Record the customer's details, or hand over the device so they can complete their own details." : "A few quick details and you’re in. Send the app link to your own WhatsApp so Smart Wash can stay with you after the wash."}</p><p className="bb-returning-customer">Been here before? <Link href="/account" aria-label="My Smart Wash Account">Open My Smart Wash Account &amp; receipts ↗</Link> to find your wash history and request your next visit.</p></div><div className="request-panel">{tab === "book" && <div className="request-tabs"><strong>FUTURE WASH REQUEST</strong></div>}<form onSubmit={submitRequest} className="big-brothers-form"><div className="form-intro"><strong>{tab === "book" ? "Request your next wash" : "Customer details"}</strong><span>{tab === "book" ? "Choose a service, preferred time and contact details. Staff confirm the appointment." : queueEntryMode === "staff" ? "You are assisting the customer. Confirm the wash price face-to-face and enter the agreed amount below." : "Enter your details, choose your wash and add an optional thank-you tip for the Smart Wash team if you wish."}</span></div>
       {tab==="book"&&<>

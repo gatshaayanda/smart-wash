@@ -30,7 +30,7 @@
 - Keep existing booking, queue, account, receipts, uploads and admin operations working.
 
 ## Visual and content standard
-- The actual Iteration 13 `docs/assets/washride-home-reference.jpeg` was opened and inspected. Transfer its compact mobile-first hierarchy, purposeful media, dominant primary action, organized secondary journeys and polished component system; do not copy WashRide branding.
+- The actual Iteration 13 `docs/assets/washride-home-reference.jpeg` is the mandatory visual reference and has been visually inspected. It establishes a compact portrait-first composition: branded top bar, strong wash imagery, clear headline, one dominant booking action, compact secondary destination tiles, a concise trust/support cue and restrained navigation. Translate its hierarchy, contrast, media quality, compactness and touch-friendly controls into Smart Wash; do not copy WashRide branding or invent unsupported destinations.
 - Compactness applies to homepage, booking, customer account, receipts and admin—not only the landing page.
 - Apply the Operational Transparency Standard: show real activity and outcomes, never fake progress.
 - Smart Wash palette: blue/cyan and navy derived from the supplied signboard. Use the supplied location video as homepage hero media and signboard photograph as poster/fallback.
