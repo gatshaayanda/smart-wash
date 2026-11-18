@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getIdToken } from "firebase/auth";
 import type { VulaBooking } from "@/lib/firebase/big-brothers-data";
 import { auth } from "@/lib/firebase/client";
@@ -15,17 +15,20 @@ export default function GoogleCalendarConnect({ uid, bookings }: Props) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  async function request(path: string, method = "GET") {
+  const request = useCallback(async (path: string, method = "GET") => {
     const user = auth.currentUser;
     if (!user || user.uid !== uid) throw new Error("Your customer session changed. Refresh and try again.");
     const response = await fetch(path, { method, headers: { Authorization: "Bearer " + await getIdToken(user) }, cache: "no-store" });
     const data = await response.json().catch(() => ({})) as { error?: string; configured?: boolean; connected?: boolean; email?: string; synced?: number; removed?: number; errors?: string[]; authorizationUrl?: string };
     if (!response.ok) throw new Error(data.error || "Google Calendar could not complete that action.");
     return data;
-  }
+  }, [uid]);
 
   useEffect(() => {
     let active = true;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("calendar") === "error") setError(params.get("reason") || "Google Calendar could not be connected.");
+    if (params.get("calendar") === "connected") setMessage("Google Calendar is connected. Confirmed visits will be added automatically.");
     void request("/api/calendar/google/status").then(data => {
       if (!active) return;
       setConfigured(data.configured !== false);
@@ -33,7 +36,7 @@ export default function GoogleCalendarConnect({ uid, bookings }: Props) {
       setEmail(data.email || "");
     }).catch(reason => { if (active) setError(reason instanceof Error ? reason.message : "Calendar status could not be loaded."); });
     return () => { active = false; };
-  }, [uid]);
+  }, [uid, request]);
 
   const bookingKey = bookings.map(item => [item.id, item.status, item.scheduledFor, item.serviceName].join(":")).join("|");
   useEffect(() => {
@@ -45,7 +48,7 @@ export default function GoogleCalendarConnect({ uid, bookings }: Props) {
       else if ((data.synced || 0) > 0 || (data.removed || 0) > 0) setMessage("Your confirmed Smart Wash visits are up to date in Google Calendar.");
     }).catch(reason => { if (active) setError(reason instanceof Error ? reason.message : "Google Calendar could not be synced."); });
     return () => { active = false; };
-  }, [connected, bookingKey, uid]);
+  }, [connected, bookingKey, uid, request]);
 
   async function connect() {
     setBusy(true); setError(""); setMessage("");
