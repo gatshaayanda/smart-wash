@@ -12,7 +12,7 @@ import type { OurFileRouter } from "@/app/api/uploadthing/core";
 
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 import { enableSmartWashPushNotifications } from "@/lib/firebase/big-brothers-notifications";
-import { subscribeCustomerBookings,subscribeCustomerQueue,subscribeLoyaltyAccount,subscribeReminderPreferences,saveReminderPreferences,saveAnnouncementPreferences,saveWhatsAppFollowUpPreference,type VulaBooking,type VulaQueueEntry } from "@/lib/firebase/big-brothers-data";
+import { subscribeCustomerBookings,subscribeCustomerQueue,subscribeLoyaltyAccount,subscribeReminderPreferences,saveReminderPreferences,saveAnnouncementPreferences,type VulaBooking,type VulaQueueEntry } from "@/lib/firebase/big-brothers-data";
 function formatBotswanaPhoneInput(value:string){let digits=value.replace(/\D/g,"");if(digits.startsWith("00267"))digits=digits.slice(5);else if(digits.startsWith("267"))digits=digits.slice(3);if(digits.startsWith("0")&&digits.length===9)digits=digits.slice(1);digits=digits.slice(0,8);return "+267 "+digits.slice(0,2)+(digits.length>2?" "+digits.slice(2,5):"")+(digits.length>5?" "+digits.slice(5,8):"")}
 function isValidBotswanaPhone(value:string){const digits=value.replace(/\D/g,"");return digits.length===11&&digits.startsWith("267")}
 function botswanaPhoneDigits(value:string){let digits=value.replace(/\D/g,"");if(digits.startsWith("00267"))digits=digits.slice(5);else if(digits.startsWith("267"))digits=digits.slice(3);if(digits.startsWith("0")&&digits.length===9)digits=digits.slice(1);return digits.slice(0,8)}
