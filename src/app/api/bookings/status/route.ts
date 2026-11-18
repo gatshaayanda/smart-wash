@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
+import { getMessaging } from "firebase-admin/messaging";
 import { requireBigBrothersStaff } from "@/lib/server/big-brothers-receipts";
 
 export const runtime = "nodejs";
@@ -28,10 +29,11 @@ export async function POST(request: Request) {
     const db = getFirestore(app);
     const bookingRef = db.doc("bookings/" + bookingId);
     const settingsRef = db.doc("businessSettings/main");
-    await db.runTransaction(async transaction => {
+    const previousStatus = await db.runTransaction(async transaction => {
       const bookingSnap = await transaction.get(bookingRef);
       if (!bookingSnap.exists) throw new Error("BOOKING_NOT_FOUND");
       const booking = bookingSnap.data() || {};
+      const before = String(booking.status || "requested");
       if (status === "confirmed") {
         const settingsSnap = await transaction.get(settingsRef);
         const settings = settingsSnap.data() || {};
@@ -74,9 +76,37 @@ export async function POST(request: Request) {
         const confirmedCount = slotSnapshot.docs.filter(doc => doc.id !== bookingId && doc.data().serviceMode === serviceMode && doc.data().status === "confirmed").length;
         if (confirmedCount >= capacity) throw new Error("BOOKING_CAPACITY_REACHED:" + capacity);
       }
-      transaction.update(bookingRef, { status, updatedAt: new Date().toISOString() });
+      transaction.update(bookingRef, { status, updatedAt: new Date().toISOString(), ...(status === "confirmed" && before !== "confirmed" ? { reminderSentAt: null } : {}) });
+      return before;
     });
-    return NextResponse.json({ updated: true, bookingId, status }, { headers: { "Cache-Control": "no-store" } });
+    let notificationSent = false;
+    if (previousStatus !== status && ["confirmed", "cancelled", "completed"].includes(status)) {
+      try {
+        const bookingSnap = await bookingRef.get();
+        const uid = String(bookingSnap.data()?.customerId || "");
+        if (uid) {
+          const preferences = await db.doc("reminderPreferences/" + uid).get();
+          if (preferences.data()?.enabled === true) {
+            const tokenSnapshot = await db.collection("notificationTokens").doc(uid).collection("tokens").where("admin", "==", false).get();
+            const tokens = tokenSnapshot.docs.map(item => String(item.data().token || "")).filter(Boolean);
+            if (tokens.length) {
+              const booking = bookingSnap.data() || {};
+              const when = booking.scheduledFor ? new Date(String(booking.scheduledFor)).toLocaleString("en-BW", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Africa/Gaborone" }) : "your requested time";
+              const copy = status === "confirmed"
+                ? { title: "Your Smart Wash visit is confirmed", body: String(booking.serviceName || "Your wash") + " · " + when + ". See your account for details." }
+                : status === "cancelled"
+                  ? { title: "Your Smart Wash visit was cancelled", body: "Open your account to choose another visit time or contact the team." }
+                  : { title: "Your wash is marked complete", body: "Your Smart Wash receipt is ready in your account." };
+              const sent = await getMessaging(app).sendEachForMulticast({ tokens, notification: copy, data: { link: "/account", bookingId } });
+              notificationSent = sent.successCount > 0;
+            }
+          }
+        }
+      } catch (notificationError) {
+        console.error("Smart Wash booking update notification failed:", notificationError instanceof Error ? notificationError.message : "unknown error");
+      }
+    }
+    return NextResponse.json({ updated: true, bookingId, status, notificationSent }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Booking status could not be saved.";
     const status = /staff sign-in/i.test(message) ? 401
