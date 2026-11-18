@@ -108,11 +108,11 @@ export async function syncGoogleCalendarBooking(uid: string, bookingId: string, 
   const endpoint = "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(eventId);
 
   if (booking.status !== "confirmed") {
-    if (existing.exists && ["cancelled", "requested"].includes(String(booking.status || ""))) {
+    if (["cancelled", "requested"].includes(String(booking.status || ""))) {
       const response = await fetch(endpoint, { method: "DELETE", headers: { Authorization: "Bearer " + accessToken }, cache: "no-store" });
       if (!response.ok && response.status !== 404 && response.status !== 410) throw new Error("A cancelled or reopened visit could not be removed from Google Calendar.");
-      await eventRef.delete();
-      return { connected: true, synced: false, removed: true };
+      if (existing.exists) await eventRef.delete();
+      return { connected: true, synced: false, removed: existing.exists || response.status === 204 };
     }
     return { connected: true, synced: false, removed: false };
   }
