@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const state = url.searchParams.get("state") || "";
   const cookie = request.headers.get("cookie") || "";
-  const cookieState = cookie.match(/(?:^|;\\s*)sw_google_calendar_state=([^;]+)/)?.[1] || "";
+  const cookieState = cookie.match(/(?:^|;\s*)sw_google_calendar_state=([^;]+)/)?.[1] || "";
   const clearCookie = (response: NextResponse) => { response.cookies.set("sw_google_calendar_state", "", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/api/calendar/google/callback", maxAge: 0 }); return response; };
   try {
     if (!state || decodeURIComponent(cookieState) !== state) throw new Error("Google Calendar connection could not be verified. Please try again.");
