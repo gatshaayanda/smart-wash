@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createHmac, createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import { createHash, createHmac, createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { bigBrothersAdminApp } from "@/lib/server/big-brothers-receipts";
@@ -85,4 +85,63 @@ export async function refreshGoogleCalendarAccessToken(uid: string, connection: 
   if (!response.ok || !result.access_token) throw new Error(result.error === "invalid_grant" ? "Google Calendar access expired. Reconnect your calendar." : "Google Calendar could not refresh its connection.");
   await calendarDb().doc("googleCalendarConnections/" + uid).set({ accessTokenExpiresAt: Date.now() + Number(result.expires_in || 3600) * 1000, lastUsedAt: new Date().toISOString() }, { merge: true });
   return result.access_token;
+}
+
+
+export async function syncGoogleCalendarBooking(uid: string, bookingId: string, booking: {
+  status?: string;
+  scheduledFor?: string;
+  serviceName?: string;
+  washChoice?: string;
+  addOns?: { serviceName?: string }[];
+  serviceMode?: string;
+  address?: string;
+}) {
+  const db = calendarDb();
+  const connectionSnap = await db.doc("googleCalendarConnections/" + uid).get();
+  if (!connectionSnap.exists) return { connected: false, synced: false, removed: false };
+  const connection = connectionSnap.data() || {};
+  const accessToken = await refreshGoogleCalendarAccessToken(uid, connection);
+  const eventRef = db.collection("googleCalendarEvents").doc(uid).collection("bookings").doc(bookingId);
+  const existing = await eventRef.get();
+  const eventId = String(existing.data()?.eventId || createHash("sha256").update("smart-wash-" + bookingId).digest("hex").slice(0, 32));
+  const endpoint = "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(eventId);
+
+  if (booking.status !== "confirmed") {
+    if (existing.exists && ["cancelled", "requested"].includes(String(booking.status || ""))) {
+      const response = await fetch(endpoint, { method: "DELETE", headers: { Authorization: "Bearer " + accessToken }, cache: "no-store" });
+      if (!response.ok && response.status !== 404 && response.status !== 410) throw new Error("A cancelled or reopened visit could not be removed from Google Calendar.");
+      await eventRef.delete();
+      return { connected: true, synced: false, removed: true };
+    }
+    return { connected: true, synced: false, removed: false };
+  }
+
+  const start = new Date(String(booking.scheduledFor || ""));
+  if (!Number.isFinite(start.getTime())) throw new Error("A confirmed visit has no valid date and time.");
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  const extras = Array.isArray(booking.addOns) ? booking.addOns.map(item => item.serviceName).filter(Boolean).join(", ") : "";
+  const washChoice = booking.washChoice === "outside" ? "Outside wash" : booking.washChoice === "inside" ? "Inside clean" : booking.washChoice === "both" ? "Inside + outside" : "As agreed with the team";
+  const details = ["Confirmed Smart Wash visit at G-West, Botswana.", "Main wash: " + washChoice + ".", extras ? "Extra care: " + extras + "." : "", booking.serviceMode === "mobile" ? "Mobile wash: " + String(booking.address || "Address to be confirmed") : "Location: Smart Wash, G-West, Botswana.", "Please use your Smart Wash account for the latest visit details."].filter(Boolean).join("\\n");
+  const event = {
+    summary: "Smart Wash · " + String(booking.serviceName || "Confirmed wash"),
+    description: details,
+    location: booking.serviceMode === "mobile" ? String(booking.address || "Mobile location to be confirmed") : "Smart Wash, G-West, Botswana",
+    start: { dateTime: start.toISOString(), timeZone: "Africa/Gaborone" },
+    end: { dateTime: end.toISOString(), timeZone: "Africa/Gaborone" },
+    reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 60 }, { method: "popup", minutes: 10 }] },
+  };
+  let response: Response;
+  if (existing.exists) {
+    response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
+    if (response.status === 404 || response.status === 410) {
+      response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify({ ...event, id: eventId }), cache: "no-store" });
+    }
+  } else {
+    response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify({ ...event, id: eventId }), cache: "no-store" });
+    if (response.status === 409) response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
+  }
+  if (!response.ok) throw new Error("A confirmed visit could not be added to Google Calendar.");
+  await eventRef.set({ eventId, status: "synced", updatedAt: new Date().toISOString() }, { merge: true });
+  return { connected: true, synced: true, removed: false, eventId };
 }
