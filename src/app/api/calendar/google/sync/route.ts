@@ -53,7 +53,6 @@ export async function POST(request: Request) {
       const extras = Array.isArray(booking.addOns) ? booking.addOns.map(item => item.serviceName).filter(Boolean).join(", ") : "";
       const details = ["Confirmed Smart Wash visit at G-West, Botswana.", "Main wash: " + String(booking.washChoice || "As agreed with the team") + ".", extras ? "Extra care: " + extras + "." : "", booking.serviceMode === "mobile" ? "Mobile wash: " + String(booking.address || "Address to be confirmed") : "Location: Smart Wash, G-West, Botswana.", "Please use your Smart Wash account for the latest visit details."].filter(Boolean).join("\\n");
       const event = {
-        id: eventId,
         summary: "Smart Wash · " + String(booking.serviceName || "Confirmed wash"),
         description: details,
         location: booking.serviceMode === "mobile" ? String(booking.address || "Mobile location to be confirmed") : "Smart Wash, G-West, Botswana",
@@ -66,7 +65,7 @@ export async function POST(request: Request) {
       if (existing.exists) {
         response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
       } else {
-        response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
+        response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify({ ...event, id: eventId }), cache: "no-store" });
         if (response.status === 409) response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
       }
       if (!response.ok) { errors.push("A confirmed visit could not be added to Google Calendar."); continue; }
