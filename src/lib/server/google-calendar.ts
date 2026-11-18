@@ -122,7 +122,7 @@ export async function syncGoogleCalendarBooking(uid: string, bookingId: string, 
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   const extras = Array.isArray(booking.addOns) ? booking.addOns.map(item => item.serviceName).filter(Boolean).join(", ") : "";
   const washChoice = booking.washChoice === "outside" ? "Outside wash" : booking.washChoice === "inside" ? "Inside clean" : booking.washChoice === "both" ? "Inside + outside" : "As agreed with the team";
-  const details = ["Confirmed Smart Wash visit at G-West, Botswana.", "Main wash: " + washChoice + ".", extras ? "Extra care: " + extras + "." : "", booking.serviceMode === "mobile" ? "Mobile wash: " + String(booking.address || "Address to be confirmed") : "Location: Smart Wash, G-West, Botswana.", "Please use your Smart Wash account for the latest visit details."].filter(Boolean).join("\\n");
+  const details = ["Confirmed Smart Wash visit at G-West, Botswana.", "Main wash: " + washChoice + ".", extras ? "Extra care: " + extras + "." : "", booking.serviceMode === "mobile" ? "Mobile wash: " + String(booking.address || "Address to be confirmed") : "Location: Smart Wash, G-West, Botswana.", "Please use your Smart Wash account for the latest visit details."].filter(Boolean).join("\n");
   const event = {
     summary: "Smart Wash · " + String(booking.serviceName || "Confirmed wash"),
     description: details,
