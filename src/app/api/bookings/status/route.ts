@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { requireBigBrothersStaff } from "@/lib/server/big-brothers-receipts";
+import { syncGoogleCalendarBooking } from "@/lib/server/google-calendar";
 
 export const runtime = "nodejs";
 
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     const previousStatus = await db.runTransaction(async transaction => {
       const bookingSnap = await transaction.get(bookingRef);
       if (!bookingSnap.exists) throw new Error("BOOKING_NOT_FOUND");
-      const booking = bookingSnap.data() || {};
+      const booking = bookingData;
       const before = String(booking.status || "requested");
       if (status === "confirmed") {
         const settingsSnap = await transaction.get(settingsRef);
@@ -79,11 +80,22 @@ export async function POST(request: Request) {
       transaction.update(bookingRef, { status, updatedAt: new Date().toISOString(), ...(status === "confirmed" && before !== "confirmed" ? { reminderSentAt: null } : {}) });
       return before;
     });
+    const bookingSnap = await bookingRef.get();
+    const bookingData = bookingSnap.data() || {};
+    const customerUid = String(bookingData.customerId || "");
+    let calendarSynced = false;
+    if (customerUid && ["confirmed", "cancelled", "requested"].includes(status)) {
+      try {
+        const calendarResult = await syncGoogleCalendarBooking(customerUid, bookingId, bookingData);
+        calendarSynced = calendarResult.synced || calendarResult.removed;
+      } catch (calendarError) {
+        console.error("Smart Wash Google Calendar update failed:", calendarError instanceof Error ? calendarError.message : "unknown error");
+      }
+    }
     let notificationSent = false;
     if (previousStatus !== status && ["confirmed", "cancelled", "completed"].includes(status)) {
       try {
-        const bookingSnap = await bookingRef.get();
-        const uid = String(bookingSnap.data()?.customerId || "");
+        const uid = customerUid;
         if (uid) {
           const preferences = await db.doc("reminderPreferences/" + uid).get();
           if (preferences.data()?.enabled === true) {
@@ -106,7 +118,7 @@ export async function POST(request: Request) {
         console.error("Smart Wash booking update notification failed:", notificationError instanceof Error ? notificationError.message : "unknown error");
       }
     }
-    return NextResponse.json({ updated: true, bookingId, status, notificationSent }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ updated: true, bookingId, status, notificationSent, calendarSynced }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Booking status could not be saved.";
     const status = /staff sign-in/i.test(message) ? 401
