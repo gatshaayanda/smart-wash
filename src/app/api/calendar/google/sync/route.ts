@@ -38,15 +38,14 @@ export async function POST(request: Request) {
       const eventRef = eventCollection.doc(bookingDoc.id);
       const existing = await eventRef.get();
       const eventId = String(existing.data()?.eventId || createHash("sha256").update("smart-wash-" + bookingDoc.id).digest("hex").slice(0, 32));
-      if (booking.status === "cancelled") {
-        if (existing.exists) {
+      if (booking.status !== "confirmed") {
+        if (existing.exists && ["cancelled", "requested"].includes(String(booking.status || ""))) {
           const deleted = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(eventId), { method: "DELETE", headers: { Authorization: "Bearer " + accessToken }, cache: "no-store" });
-          if (!deleted.ok && deleted.status !== 404 && deleted.status !== 410) { errors.push("A cancelled visit could not be removed from Calendar."); continue; }
+          if (!deleted.ok && deleted.status !== 404 && deleted.status !== 410) { errors.push("A cancelled or reopened visit could not be removed from Calendar."); continue; }
           await eventRef.delete(); removed++;
         }
         continue;
       }
-      if (booking.status !== "confirmed") continue;
       const start = new Date(String(booking.scheduledFor || ""));
       if (!Number.isFinite(start.getTime())) { errors.push("A confirmed visit has no valid date and time."); continue; }
       const end = new Date(start.getTime() + 30 * 60 * 1000);
@@ -64,6 +63,9 @@ export async function POST(request: Request) {
       let response: Response;
       if (existing.exists) {
         response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
+        if (response.status === 404 || response.status === 410) {
+          response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify({ ...event, id: eventId }), cache: "no-store" });
+        }
       } else {
         response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", { method: "POST", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify({ ...event, id: eventId }), cache: "no-store" });
         if (response.status === 409) response = await fetch(endpoint, { method: "PATCH", headers: { Authorization: "Bearer " + accessToken, "Content-Type": "application/json" }, body: JSON.stringify(event), cache: "no-store" });
