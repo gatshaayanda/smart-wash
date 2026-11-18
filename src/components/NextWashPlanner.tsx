@@ -10,11 +10,11 @@ const dateAtNoon = (key: string) => new Date(key+"T12:00:00");
 const displayDate = (key: string) => new Intl.DateTimeFormat("en-BW",{weekday:"long",day:"numeric",month:"long"}).format(dateAtNoon(key));
 const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-export default function NextWashPlanner({ lastWashAt = "", customerDetails = {} }: { lastWashAt?: string; customerDetails?: { customerName?: string; phone?: string; vehicleType?: string; vehicleRegistration?: string } }) {
+export default function NextWashPlanner({ customerDetails = {} }: { customerDetails?: { customerName?: string; phone?: string; vehicleType?: string; vehicleRegistration?: string } }) {
  const [settings,setSettings] = useState<Record<string,unknown>>({});
  const [forecast,setForecast] = useState<Record<string,number>>({});
  const [forecastReady,setForecastReady] = useState(false);
- const [month,setMonth] = useState(()=>{const d=new Date();d.setDate(d.getDate()+8);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")});
+ const [month,setMonth] = useState(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")});
  const [selected,setSelected] = useState("");
  const [time,setTime] = useState("11:00");
  const [showTimePicker,setShowTimePicker] = useState(false);
@@ -39,7 +39,7 @@ export default function NextWashPlanner({ lastWashAt = "", customerDetails = {} 
   return()=>{cancelled=true};
  },[]);
  const minDate = useMemo(()=>{const d=new Date();d.setDate(d.getDate()+1);return dateKey(d)},[]);
- const planningAnchor = useMemo(()=>{const last=lastWashAt?new Date(lastWashAt):new Date();return Number.isFinite(last.getTime())?new Date(last.getFullYear(),last.getMonth(),last.getDate()):new Date()},[lastWashAt]);
+ const planningAnchor = useMemo(()=>{const today=new Date();return new Date(today.getFullYear(),today.getMonth(),today.getDate())},[]);
  const choices = useMemo(()=>{
   const make=(from:number,to:number,week:string):DayChoice|null=>{
    const days=Array.from({length:to-from+1},(_,i)=>{const d=new Date(planningAnchor);d.setDate(d.getDate()+from+i);return dateKey(d)})
@@ -49,7 +49,7 @@ export default function NextWashPlanner({ lastWashAt = "", customerDetails = {} 
    const chosen=known[0]||days[0];
    return {date:chosen,rain:forecast[chosen]??null,label:known.length?"Lower rain outlook":"Long-range planning date",week};
   };
-  return [make(8,14,"Week 2"),make(15,21,"Week 3")].filter((x):x is DayChoice=>Boolean(x));
+  return [make(1,7,"Next 7 days"),make(8,14,"Following week")].filter((x):x is DayChoice=>Boolean(x));
  },[forecast,closedDays.join("|"),planningAnchor,minDate]);
  const monthParts=month.split("-").map(Number);
  const first=new Date(monthParts[0],monthParts[1]-1,1);
@@ -74,8 +74,8 @@ export default function NextWashPlanner({ lastWashAt = "", customerDetails = {} 
   return()=>{cancelled=true};
  },[selected]);
  return <section className="bb-next-wash" aria-labelledby="bb-next-wash-title">
-  <div className="bb-next-wash-heading"><p className="big-brothers-eyebrow">PLAN AHEAD · G-WEST</p><h2 id="bb-next-wash-title">Your next wash</h2><p>{lastWashAt?"Your suggestions are timed from your last saved wash.":"Let’s find a good day for your next visit."} A request is not a confirmed booking until Smart Wash confirms it.</p></div>
-  <div className="bb-wash-suggestions"><div className="bb-wash-suggestions-title"><span>🌤️</span><div><strong>Your next good wash windows</strong><small>Two suggested options in different weeks. Weather can change, so we&apos;ll refresh the outlook closer to your visit.</small></div></div>
+  <div className="bb-next-wash-heading"><p className="big-brothers-eyebrow">PLAN AHEAD · G-WEST</p><h2 id="bb-next-wash-title">Your next wash</h2><p>Choose a suggested day or open the calendar. Your visit is not confirmed until Smart Wash confirms it.</p></div>
+  <div className="bb-wash-suggestions"><div className="bb-wash-suggestions-title"><span>🌤️</span><div><strong>Your next good wash windows</strong><small>Two nearby options based on local weather and opening days. Weather can change, so we’ll refresh the outlook closer to your visit.</small></div></div>
    <div className="bb-wash-suggestion-grid">{choices.map(choice=><button type="button" key={choice.week} className={"bb-wash-suggestion"+(selected===choice.date?" selected":"")} onClick={()=>choose(choice.date)}><span>{choice.week}</span><strong>{displayDate(choice.date)}</strong><b>Choose an available time</b><small>{choice.rain===null?"Forecast not available this far ahead":choice.rain+"% rain probability · "+choice.label}</small><i>{selected===choice.date?"Selected ✓":"Choose this day →"}</i></button>)}</div>
    {!forecastReady&&<p className="bb-planner-status">Checking the local weather outlook…</p>}
   </div>
