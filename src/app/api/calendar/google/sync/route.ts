@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
-import { calendarDb, decryptCalendarToken, googleCalendarConfig, requireCalendarCustomer } from "@/lib/server/google-calendar";
+import { decryptCalendarToken, requireCalendarCustomer } from "@/lib/server/google-calendar";
 
 export const runtime = "nodejs";
 
