@@ -108,7 +108,7 @@ export async function POST(request: Request) {
                 ? { title: "Your Smart Wash visit is confirmed", body: String(booking.serviceName || "Your wash") + " · " + when + ". See your account for details." }
                 : status === "cancelled"
                   ? { title: "Your Smart Wash visit was cancelled", body: "Open your account to choose another visit time or contact the team." }
-                  : { title: "Your wash is marked complete", body: "Your Smart Wash receipt is ready in your account." };
+                  : { title: "Your wash is marked complete", body: "Your Smart Wash visit has been marked complete. Check your account for the latest details." };
               const sent = await getMessaging(app).sendEachForMulticast({ tokens, notification: copy, data: { link: "/account", bookingId } });
               notificationSent = sent.successCount > 0;
             }
