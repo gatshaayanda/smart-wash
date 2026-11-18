@@ -10,7 +10,7 @@ const dateAtNoon = (key: string) => new Date(key+"T12:00:00");
 const displayDate = (key: string) => new Intl.DateTimeFormat("en-BW",{weekday:"long",day:"numeric",month:"long"}).format(dateAtNoon(key));
 const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-export default function NextWashPlanner({ lastWashAt = "" }: { lastWashAt?: string }) {
+export default function NextWashPlanner({ lastWashAt = "", customerDetails = {} }: { lastWashAt?: string; customerDetails?: { customerName?: string; phone?: string; vehicleType?: string; vehicleRegistration?: string } }) {
  const [settings,setSettings] = useState<Record<string,unknown>>({});
  const [forecast,setForecast] = useState<Record<string,number>>({});
  const [forecastReady,setForecastReady] = useState(false);
@@ -63,7 +63,7 @@ export default function NextWashPlanner({ lastWashAt = "" }: { lastWashAt?: stri
  const selectableTimes=availabilityChecked?slots:timeSlots;
  const timeGroups=useMemo(()=>{const groups=new Map<string,string[]>();for(const slot of selectableTimes){const hour=slot.slice(0,2);groups.set(hour,[...(groups.get(hour)||[]),slot])}return Array.from(groups.entries()).map(([hour,times])=>({hour,times}))},[selectableTimes.join("|")]);
  const choose=(date:string,selectedTime=(timeSlots.includes("11:00")?"11:00":timeSlots[0]||"11:00"))=>{setSelected(date);setTime(selectedTime);setToast("Selected "+displayDate(date)+". Choose your preferred time, then send your request to the Smart Wash team.");};
- const continueToRequest=()=>{if(!selected){setToast("Choose a suggested day or a date in the calendar first.");return}window.location.assign("/?journey=book&preferredDate="+encodeURIComponent(selected)+"&preferredTime="+encodeURIComponent(time)+"#request")};
+ const continueToRequest=()=>{if(!selected){setToast("Choose a suggested day or a date in the calendar first.");return}try{sessionStorage.setItem("smart-wash-repeat-wash",JSON.stringify(customerDetails))}catch{}window.location.assign("/?journey=book&preferredDate="+encodeURIComponent(selected)+"&preferredTime="+encodeURIComponent(time)+"#request")};
  useEffect(()=>{
   if(!selected)return;
   let cancelled=false;setAvailabilityLoading(true);
