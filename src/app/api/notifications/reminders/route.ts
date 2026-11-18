@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 async function run(request: Request) {
-  const expected = (process.env.CRON_SECRET || process.env.SMART_WASH_REMINDER_CRON_SECRET)?.trim();
+  const expected = [process.env.CRON_SECRET, process.env.SMART_WASH_REMINDER_CRON_SECRET].map(value => value?.trim()).filter((value): value is string => Boolean(value));
   const supplied = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim();
-  if (!expected || supplied !== expected) return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
+  if (!expected.length || !supplied || !expected.includes(supplied)) return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
   try {
     const { runSmartWashBookingReminders } = await import("@/lib/server/big-brothers-reminder-runner");
     return NextResponse.json({ ok: true, ...(await runSmartWashBookingReminders()) }, { headers: { "Cache-Control": "no-store" } });
