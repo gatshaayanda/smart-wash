@@ -19,7 +19,7 @@ export async function runSmartWashBookingReminders() {
   const db = getFirestore(app);
   const messaging = getMessaging(app);
   const now = new Date();
-  const until = new Date(now.getTime() + 30 * 60 * 1000);
+  const until = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   const snapshot = await db.collection("bookings")
     .where("status", "==", "confirmed")
     .where("scheduledFor", ">=", now.toISOString())
@@ -39,8 +39,8 @@ export async function runSmartWashBookingReminders() {
     const result = await messaging.sendEachForMulticast({
       tokens,
       notification: {
-        title: "Your Smart Wash booking is coming up",
-        body: String(booking.data().serviceName || "Your car wash") + " is scheduled within the next 30 minutes."
+        title: "A little reminder from Smart Wash",
+        body: String(booking.data().serviceName || "Your car wash") + " is coming up within the next 24 hours."
       },
       data: { link: "/#my-wash", bookingId: booking.id }
     });
