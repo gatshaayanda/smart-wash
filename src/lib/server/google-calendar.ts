@@ -21,7 +21,7 @@ export function calendarDb() {
 }
 
 export async function requireCalendarCustomer(request: Request) {
-  const token = request.headers.get("authorization")?.match(/^Bearer\\s+(.+)$/i)?.[1];
+  const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
   if (!token) throw new Error("Sign in to your Smart Wash account first.");
   const app = bigBrothersAdminApp();
   const decoded = await getAuth(app).verifyIdToken(token, true);
