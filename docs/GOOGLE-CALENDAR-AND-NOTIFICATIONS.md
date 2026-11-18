@@ -6,7 +6,7 @@ The customer account can connect a customer's own Google Calendar. Smart Wash re
 
 When connected:
 - Confirmed Smart Wash bookings are added to the customer's primary calendar.
-- If staff changes a confirmed visit time, the event is updated on the next account sync.
+- When staff confirms, reschedules or cancels a visit, the event is synchronized immediately by the staff booking-status operation. The customer account also runs a catch-up sync when opened.
 - If staff cancels a visit, its Smart Wash calendar event is removed on the next account sync.
 - Requested/unconfirmed visits are never written to Google Calendar.
 - Calendar events carry 60-minute and 10-minute popup reminders.
