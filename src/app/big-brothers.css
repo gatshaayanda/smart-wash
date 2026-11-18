@@ -1679,3 +1679,54 @@
 .sw-booking-addons label input{width:18px;height:18px;flex:0 0 18px;accent-color:#176b87}
 .sw-booking-addons label span{flex:1;min-width:0}
 .sw-booking-addons label strong{white-space:nowrap;font-size:12px;color:#183746}
+
+
+/* Customer-care journey: keep booking first, with readable choices and clear status. */
+.customer-next-visit{width:min(100% - 28px,980px);margin:0 auto 12px;padding:13px 16px;border:1px solid #b9dce8;border-left:4px solid #087eaf;border-radius:11px;background:#edf7fb;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.customer-next-visit>div{display:grid;gap:4px;min-width:0}
+.customer-next-visit .big-brothers-eyebrow{font-size:10px;letter-spacing:.13em;margin:0;color:#176b8b}
+.customer-next-visit strong{font-size:15px;color:#10283d}
+.customer-next-visit span,.customer-next-visit small{font-size:12px;line-height:1.4;color:#506675}
+.customer-next-visit-status{justify-self:start;padding:5px 8px;border-radius:99px;background:#fff0d9;color:#82530b;font-size:11px}
+.customer-next-visit-status.confirmed{background:#dff3e8;color:#17643b}
+.customer-notification-action,.sw-calendar-action{min-height:42px;padding:10px 14px;border:0;border-radius:8px;background:#087eaf;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.customer-notification-action:disabled,.sw-calendar-action:disabled{opacity:.55;cursor:wait}
+.sw-calendar-connect{display:grid;gap:10px;margin:12px 0;padding:14px;border:1px solid #dce7ed;border-radius:11px;background:#f7fafb}
+.sw-calendar-copy{display:flex;align-items:flex-start;gap:11px}
+.sw-calendar-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:9px;background:#e4f3f8;color:#176b8b;font-size:18px}
+.sw-calendar-copy strong{display:block;color:#10283d;font-size:14px}
+.sw-calendar-copy p{margin:4px 0 0;color:#506675;font-size:13px;line-height:1.45}
+.sw-calendar-connect>small,.sw-calendar-note{color:#60727c;font-size:12px;line-height:1.45}
+.sw-calendar-action{justify-self:start}
+.sw-calendar-action.secondary{border:1px solid #cbd9df;background:#fff;color:#183746}
+.sw-calendar-feedback{margin:0;color:#17643b;font-size:13px;line-height:1.45}
+.sw-calendar-feedback.error{color:#a12b2b}
+.customer-account-compact .customer-account-workspace-intro>div:first-child>p:last-child{font-size:14px;line-height:1.5}
+.customer-account-compact .customer-account-status{font-size:11px}
+.customer-account-compact .customer-account-primary-action{font-size:13px}
+.customer-account-compact .customer-wash-choice-panel>div:first-child>p:last-child{font-size:14px;line-height:1.5}
+.customer-account-compact .customer-wash-choice-options button span{font-size:14px}
+.customer-account-compact .customer-wash-choice-options button small{font-size:12px;line-height:1.4}
+.customer-account-compact .customer-wash-choice-options button b{font-size:12px}
+.customer-account-compact .customer-wash-choice-next span{font-size:12px;line-height:1.45}
+.customer-account-compact .customer-wash-choice-next button{font-size:13px}
+.customer-account-compact .customer-account-tools-heading .big-brothers-eyebrow{font-size:11px}
+.customer-account-compact .customer-account-tools-heading>span{font-size:13px}
+.customer-account-compact .customer-account-tools>button strong{font-size:14px}
+.customer-account-compact .customer-account-tools>button small{font-size:12px;line-height:1.4}
+.customer-account-compact .customer-account-tools>button>b{font-size:12px}
+.customer-account-compact .customer-account-secondary-disclosure>summary strong{font-size:14px}
+.customer-account-compact .customer-account-secondary-disclosure>summary small{font-size:12px;line-height:1.4}
+.customer-account-compact .customer-account-card p,.customer-account-compact .customer-regulars-club p{font-size:13px;line-height:1.5}
+.customer-account-compact .customer-account-receipts-heading h2{font-size:20px}
+@media(max-width:680px){
+ .customer-next-visit{width:calc(100% - 22px);align-items:flex-start;flex-direction:column;gap:9px;padding:12px}
+ .customer-next-visit>div:last-child{width:100%}
+ .customer-account-compact .customer-wash-choice-options{grid-template-columns:1fr;gap:7px}
+ .customer-account-compact .customer-wash-choice-options button,.customer-account-compact .customer-wash-choice-options button.selected{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:3px 10px;min-height:70px;padding:10px 12px}
+ .customer-account-compact .customer-wash-choice-options button span{grid-column:1;grid-row:1;font-size:14px}
+ .customer-account-compact .customer-wash-choice-options button small{grid-column:1;grid-row:2;font-size:12px}
+ .customer-account-compact .customer-wash-choice-options button b{grid-column:2;grid-row:1/3;align-self:center;font-size:12px}
+ .customer-account-compact .customer-account-workspace-intro>div:first-child>p:last-child{font-size:14px}
+ .customer-account-compact .customer-account-primary-action{font-size:13px}
+}
