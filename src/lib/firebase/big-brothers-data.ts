@@ -44,7 +44,7 @@ export function subscribeReminderPreferences(uid: string, cb: (value: Record<str
   return onSnapshot(doc(db, "reminderPreferences", uid), snap => cb(snap.exists() ? snap.data() : null), fail);
 }
 export async function saveReminderPreferences(uid: string, enabled: boolean) {
-  await setDoc(doc(db, "reminderPreferences", uid), { enabled, channels: ["in-app"], updatedAt: new Date().toISOString() }, { merge: true });
+  await setDoc(doc(db, "reminderPreferences", uid), { enabled, channels: enabled ? ["in-app", "push"] : ["in-app"], updatedAt: new Date().toISOString() }, { merge: true });
 }
 export async function saveAnnouncementPreferences(uid: string, enabled: boolean) {
   await setDoc(doc(db, "reminderPreferences", uid), { announcementsEnabled: enabled, updatedAt: new Date().toISOString() }, { merge: true });
