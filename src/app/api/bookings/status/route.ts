@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const previousStatus = await db.runTransaction(async transaction => {
       const bookingSnap = await transaction.get(bookingRef);
       if (!bookingSnap.exists) throw new Error("BOOKING_NOT_FOUND");
-      const booking = bookingData;
+      const booking = bookingSnap.data() || {};
       const before = String(booking.status || "requested");
       if (status === "confirmed") {
         const settingsSnap = await transaction.get(settingsRef);
